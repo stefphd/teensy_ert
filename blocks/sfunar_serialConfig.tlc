@@ -1,0 +1,43 @@
+%% File : sfunar_serialConfig.tlc
+%%
+%% Description: 
+%%   Code generation file for sfunar_serialConfig
+%%
+
+%% Copyright 2010-2014 The MathWorks, Inc.
+
+%implements sfunar_serialConfig "C"
+
+%include "block_common_includes.tlc"
+
+%% Function: BlockTypeSetup ===============================================
+%%
+%function BlockTypeSetup(block, system) void
+  
+  %% Ensure required header files are included
+  %<ArduinoCommonBlockTypeSetup(block, system)>
+
+%endfunction
+
+%% Function: Start ========================================================
+%%
+%function Start(block, system) Output
+  %%
+  %assign p1_val = CAST("Number", LibBlockParameterValue(p1,0)) - 1
+  %assign p2_val = LibBlockParameterValue(p2,0)
+  %if ExtMode && p1_val == 0
+      %return
+  %endif
+  %if p1_val == 0
+      %assign Serial = "Serial"
+  %else
+      %assign Serial = "Serial%<p1_val>" 
+  %endif
+  %%
+    /* %<Type> (%<ParamSettings.FunctionName>): %<Name> */
+  %<Serial>.begin(%<p2_val>);
+
+  %%
+%endfunction
+
+%% [EOF]

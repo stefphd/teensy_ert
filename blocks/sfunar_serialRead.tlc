@@ -1,0 +1,79 @@
+%% File : sfunar_serialRead.tlc
+%%
+%% Description: 
+%%   Code generation file for sfunar_serialRead
+%%
+
+%% Copyright 2010-2014 The MathWorks, Inc.
+
+%implements sfunar_serialRead "C"
+
+%include "block_common_includes.tlc"
+
+%% Function: BlockTypeSetup ===============================================
+%function BlockTypeSetup(block, system) void
+
+  %% Ensure required header files are included
+  %<ArduinoCommonBlockTypeSetup(block, system)>
+  
+%endfunction
+
+%% Function: BlockInstanceSetup ===========================================
+%%
+%function BlockInstanceSetup(block, system) void
+  %%
+  %<LibBlockSetIsExpressionCompliant(block)>
+  %%
+%endfunction
+
+%% Function: Outputs ======================================================
+%%
+%function Outputs(block, system) Output
+
+  %if !SLibCodeGenForSim()
+    %assign y1_val = LibBlockOutputSignal(0, "", "", 0)
+    %assign p1_val = CAST("Number", LibBlockParameterValue(p1,0)) - 1
+    %if ExtMode && p1_val == 0
+      %return
+    %endif
+    %if p1_val == 0
+      %assign Serial = "Serial"
+    %else
+      %assign Serial = "Serial%<p1_val>" 
+    %endif
+    %%
+    if (%<Serial>.available()) {
+      %<y1_val> = %<Serial>.read();
+    } else {
+      %<y1_val> = -1;
+    }
+  %endif
+
+%endfunction
+
+%% Function: BlockOutputSignal ============================================
+%%
+%function BlockOutputSignal(block,system,portIdx,ucv,lcv,idx,retType) void
+  %%
+  %assign p1_val = CAST("Number", LibBlockParameterValue(p1,0)) - 1
+  %if p1_val == 0
+    %assign Serial = "Serial"
+  %else
+    %assign Serial = "Serial%<p1_val>" 
+  %endif
+  %switch retType
+    %case "Signal"
+      %if portIdx == 0
+        %return "%<Serial>.read()"
+      %else
+        %assign errTxt = "Block output port index not supported: %<portIdx>"
+        %<LibBlockReportError(block,errTxt)>
+      %endif
+    %default
+      %assign errTxt = "Unsupported return type: %<retType>"
+      %<LibBlockReportError(block,errTxt)>
+  %endswitch
+  %%
+%endfunction
+
+%% [EOF]

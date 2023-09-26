@@ -1,0 +1,84 @@
+%% File : sfunar_digitalInput.tlc
+%%
+
+%implements sfunar_digitalInput "C"
+
+%include "block_common_includes.tlc"
+
+%% Function: BlockTypeSetup ===============================================
+%%
+%function BlockTypeSetup(block, system) void
+
+  %% Ensure required header files are included
+  %<ArduinoCommonBlockTypeSetup(block, system)>
+
+%endfunction
+
+%% Function: BlockInstanceSetup ===========================================
+%%
+%function BlockInstanceSetup(block, system) void
+  %%
+  %<LibBlockSetIsExpressionCompliant(block)>
+  %%
+%endfunction
+
+%% Function: Start ========================================================
+%%
+%function Start(block, system) Output
+  %%
+  %%
+
+%if !SLibCodeGenForSim()
+    /* %<Type> (%<ParamSettings.FunctionName>): %<Name> */
+  %assign p1_val = LibBlockParameter(p1, "", "", 0)
+  %switch p2.Value[0]
+      %case 1
+  	    pinMode(%<p1_val>, INPUT);
+      %case 2
+  	    pinMode(%<p1_val>, INPUT_PULLUP);
+      %case 3
+  	    pinMode(%<p1_val>, INPUT_PULLDOWN);
+  %endswitch
+  %%
+%endif
+%endfunction
+
+%% Function: Outputs ======================================================
+%%
+%function Outputs(block, system) Output
+
+  %if !SLibCodeGenForSim()
+    %if !LibBlockOutputSignalIsExpr(0)
+      %assign p1_val = LibBlockParameter(p1, "", "", 0)
+      %assign y1_val = LibBlockOutputSignal(0, "", "", 0)
+      %%
+      %<y1_val> = digitalRead(%<p1_val>);
+    %endif 
+  %endif
+
+%endfunction
+
+
+%% Function: BlockOutputSignal =================================================
+%% Abstract:
+%%      Return an output expression.  This function *may*
+%%      be used by Simulink when optimizing the Block IO data structure.
+%%
+%function BlockOutputSignal(block,system,portIdx,ucv,lcv,idx,retType) void
+  
+  %assign retVal = "0U"
+  %if !SLibCodeGenForSim()
+    %switch retType
+      %case "Signal"
+        %assign p1_val = LibBlockParameter(p1, "", "", 0)
+        %assign retVal = "digitalRead(%<p1_val>)"
+        %break
+      %default
+        %assign errTxt = "Unsupported return type: %<retType>"
+        %<LibBlockReportError(block,errTxt)>
+        %break
+    %endswitch
+  %endif
+  %return retVal
+  
+%endfunction

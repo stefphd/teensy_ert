@@ -1,0 +1,54 @@
+%% File : sfunar_pwmOutput.tlc
+%%
+%% Description: 
+%%   Code generation file for sfunar_pwmOutput.c
+
+%implements sfunar_pwmOutput "C"
+
+%include "block_common_includes.tlc"
+
+%% Function: BlockTypeSetup ===============================================
+%function BlockTypeSetup(block, system) void
+
+  %% Ensure required header files are included
+  %<ArduinoCommonBlockTypeSetup(block, system)>
+  
+%endfunction
+
+%% Function: BlockInstanceSetup ===========================================
+%%
+%function BlockInstanceSetup(block, system) void
+  %%
+  %<LibBlockSetIsExpressionCompliant(block)>
+  %%
+%endfunction
+
+%% Function: Start ========================================================
+%%
+%function Start(block, system) Output
+
+  %if !SLibCodeGenForSim()
+    
+    /* %<Type> (%<ParamSettings.FunctionName>): %<Name> */
+    %assign p1_val = LibBlockParameter(p1, "", "", 0)
+    %assign p2_val = LibBlockParameter(p2, "", "", 0)
+    pinMode(%<p1_val>, OUTPUT);
+    analogWriteFrequency(%<p1_val>, %<p2_val>);
+
+  %endif
+    
+%endfunction
+
+%% Function: Outputs ======================================================
+%%
+%function Outputs(block, system) Output
+
+  %if !SLibCodeGenForSim()
+    %assign p1_val = LibBlockParameter(p1, "", "", 0)
+    %assign u1_val = LibBlockInputSignal(0, "", "", 0)
+    %%
+    analogWrite(%<p1_val>, %<u1_val>);
+  %endif
+%endfunction
+
+%% [EOF]

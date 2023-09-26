@@ -1,0 +1,46 @@
+%% File : sfunar_analogResolution.tlc
+%%
+%% Description: 
+%%   Code generation file for sfunar_analogResolution.c
+
+%implements sfunar_analogResolution "C"
+
+%include "block_common_includes.tlc"
+
+%% Function: BlockTypeSetup ===============================================
+%function BlockTypeSetup(block, system) void
+
+  %% Ensure required header files are included
+  %<ArduinoCommonBlockTypeSetup(block, system)>
+  
+%endfunction
+
+%% Function: BlockInstanceSetup ===========================================
+%%
+%function BlockInstanceSetup(block, system) void
+  %%
+  %<LibBlockSetIsExpressionCompliant(block)>
+  %%
+%endfunction
+
+%% Function: Start ========================================================
+%%
+%function Start(block, system) Output
+
+  %if !SLibCodeGenForSim()
+    
+    /* %<Type> (%<ParamSettings.FunctionName>): %<Name> */
+    %assign p1_val = LibBlockParameter(p1, "", "", 0)
+    analogReadResolution(%<p1_val>);
+
+  %endif
+    
+%endfunction
+
+%% Function: Outputs ======================================================
+%%
+%function Outputs(block, system) Output
+
+%endfunction
+
+%% [EOF]

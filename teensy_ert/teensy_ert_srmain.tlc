@@ -1,0 +1,176 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% Abstract:
+%%   Custom file processing to generate a "main" file.
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%selectfile NULL_FILE
+
+%function FcnSingleTaskingMain() void
+
+  %if GenerateSampleERTMain
+    %assign CompiledModel.GenerateSampleERTMain = TLC_FALSE
+  %endif
+
+  %if LibIsModelReferenceTarget()
+    %return
+  %endif
+
+  %assign cFile = LibCreateSourceFile("Source", "Custom", "ert_main")
+  %openfile tmpBuf
+  #include "%<LibGetMdlPubHdrBaseName()>.h"
+  #include "Arduino.h"
+  %if ExtMode
+    #include <ext_work.h>          /* External mode header files */
+    #include <ext_svr.h>
+    #include <ext_share.h>
+    #include <updown.h>
+  %endif
+  %closefile tmpBuf
+  %<LibSetSourceFileSection(cFile, "Includes", tmpBuf)>
+
+  %openfile tmpBuf
+  %closefile tmpBuf
+  %<LibSetSourceFileSection(cFile, "Declarations", tmpBuf)>
+
+  %openfile tmpBuf
+  /* Overrun counter */
+  static uint8_t uOverrunCounter;
+
+  uint8_t GetOverrunCounter(void)
+  {
+  	return uOverrunCounter;
+  }
+
+  %% Get fundamental step time
+  %assign SAMPLETIME = CompiledModel.FundamentalStepSize
+  %if SAMPLETIME < 0.000001
+      %<LibReportError("The minimum supported sample time is 1 microsecond. Change the Sample time parameter in blocks that use incorrect sample times.")>
+  %endif
+  %assign SampleRate  = CAST("Number", %<SAMPLETIME> * 1000000)
+  #define STEP_SIZE %<SampleRate>UL /* Sample Time in microseconds */
+
+  %if GenerateClassInterface
+      %% Create C++ object
+      %<::CompiledModel.Name> %<::CPPObjectName>;
+  %endif
+  
+  %if ISEQUAL(TimerSource, "Pooling")
+    unsigned long oldTime;
+    unsigned long actualTime;
+  %else
+    #include "IntervalTimer.h"
+    IntervalTimer  mdlTimer;
+  %endif
+
+  int main(void)
+  {
+  
+  %if ExtMode
+    /* initialize external mode */
+    rtParseArgsForExtMode(0, NULL);
+  %endif
+
+%if ! ISEQUAL(TimerSource, "Pooling")
+    %if !GenerateClassInterface
+    %assign stepFcnName = "%<CGMODEL_ACCESS("CGModel.getModelEntryFunctionName","Step", "")>"
+    %else
+        %if CGMODEL_ACCESS("CGModel.isCPPMappingEnabled")
+            %assign stepFcnName = "%<CGMODEL_ACCESS("CGModel.getModelEntryFunctionName","Step", "")>"
+        %else
+            %assign stepFcnName = "step"
+        %endif
+    %assign stepFcnName = %<::CPPObjectName>.%<stepFcnName>;
+    %endif
+    %assign stepFcnName = "%<CGMODEL_ACCESS("CGModel.getModelEntryFunctionName","Step", "")>"
+%endif
+
+/* Initialize model */
+  %if !GenerateClassInterface
+    %<LibCallModelInitialize()>\
+  %else
+    %if CGMODEL_ACCESS("CGModel.isCPPMappingEnabled")
+        %assign initFcnName = "%<CGMODEL_ACCESS("CGModel.getModelEntryFunctionName","Initialize", "")>"
+    %else
+        %assign initFcnName = "initialize"
+    %endif
+    %<::CPPObjectName>.%<initFcnName>();
+  %endif
+
+%if ExtMode
+    %<SLibGenERTExtModeInit()>
+%endif
+
+%if ISEQUAL(TimerSource, "Pooling")
+    oldTime = micros();
+%else
+    mdlTimer.begin(%<stepFcnName>, STEP_SIZE); /* Also starts the timer */
+%endif
+
+/* Running Model*/
+    while (true) {
+        %if ExtMode
+            if (!(%<ERTStopCheck()>)) {
+                break;
+            }
+ 	        %<FcnGenerateExtModeOneStep()>
+        %endif
+
+        %if ISEQUAL(TimerSource, "Pooling")
+	        %<LibCallModelStep(0)>
+        %endif
+        
+        %if ExtMode
+            rtExtModeCheckEndTrigger();
+        %endif
+        
+        %if ISEQUAL(TimerSource, "Pooling")
+            actualTime = micros();
+            /* Overrun check */
+            if ((actualTime - oldTime) >= STEP_SIZE) {
+                /* We missed our time slot for actual step, report it! */
+                if(uOverrunCounter < 255U){
+                    uOverrunCounter++;
+                }
+                oldTime = actualTime;               /* Update time stamp of last step */
+                continue;                           /* We are late, continue with next step */
+            }
+    
+            /* Waiting with pooling method */
+            while((actualTime - oldTime) < STEP_SIZE){
+                actualTime = micros();                  /* Get actual time */
+            }
+            oldTime = actualTime;                       /* Update time stamp of last step */
+        %endif
+    }
+
+/* Terminate model */
+    %if ! ISEQUAL(TimerSource, "Pooling")
+        mdlTimer.end();
+    %endif
+    
+    %if ExtMode
+	    rtExtModeShutdown(%<NumSynchronousSampleTimes>);
+	    %% This delay ensures that the serial data are sent
+        delay(1000);
+    %endif
+
+      %if !GenerateClassInterface
+        %<LibCallModelTerminate()>\
+      %else
+        %if CGMODEL_ACCESS("CGModel.isCPPMappingEnabled")
+            %assign termFcnName = "%<CGMODEL_ACCESS("CGModel.getModelEntryFunctionName","Terminate", "")>"
+        %else
+            %assign termFcnName = "terminate"
+        %endif
+        %<::CPPObjectName>.%<termFcnName>();
+    %endif
+
+    
+    return 0;
+  }
+  %closefile tmpBuf
+  %<LibSetSourceFileSection(cFile, "Functions", tmpBuf)>
+
+
+%endfunction

@@ -1,0 +1,69 @@
+%% File : sfunar_cpuTempRead.tlc
+%%
+
+%implements sfunar_cpuTempRead "C"
+
+%include "block_common_includes.tlc"
+
+%% Function: BlockTypeSetup ===============================================
+%%
+%function BlockTypeSetup(block, system) void
+
+  %% Ensure required header files are included
+  %<ArduinoCommonBlockTypeSetup(block, system)>
+
+%endfunction
+
+%% Function: BlockInstanceSetup ===========================================
+%%
+%function BlockInstanceSetup(block, system) void
+  %%
+  %<LibBlockSetIsExpressionCompliant(block)>
+  %%
+%endfunction
+
+%% Function: Start ========================================================
+%%
+%function Start(block, system) Output
+  
+%endfunction
+
+%% Function: Outputs ======================================================
+%%
+%function Outputs(block, system) Output
+
+  %if !SLibCodeGenForSim()
+    %if !LibBlockOutputSignalIsExpr(0)
+      %assign y1_val = LibBlockOutputSignal(0, "", "", 0)
+      %<y1_val> = tempmonGetTemp();
+    %endif 
+  %endif
+
+%endfunction
+
+
+%% Function: BlockOutputSignal ============================================
+%%
+%function BlockOutputSignal(block,system,portIdx,ucv,lcv,idx,retType) void
+  %%
+  %assign retVal = "0F"
+  %if !SLibCodeGenForSim()
+      %%
+      %switch retType
+        %case "Signal"
+          %if portIdx == 0
+            %return "tempmonGetTemp()"
+          %else
+            %assign errTxt = "Block output port index not supported: %<portIdx>"
+            %<LibBlockReportError(block,errTxt)>
+          %endif
+        %default
+          %assign errTxt = "Unsupported return type: %<retType>"
+          %<LibBlockReportError(block,errTxt)>
+      %endswitch
+  %endif
+  %return retVal
+  %%
+%endfunction
+
+%% [EOF]

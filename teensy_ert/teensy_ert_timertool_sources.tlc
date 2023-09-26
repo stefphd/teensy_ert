@@ -1,0 +1,13 @@
+
+%assign TeensyCoreDir = FEVAL("teensy_ert.Prefs.getCorePath")
+%assign TeensyTimerToolDir = TeensyCoreDir + "/../libraries/TeensyTimerTool/src"
+%<LibAddToModelSources(TeensyTimerToolDir + "/config.cpp")>
+%<LibAddToModelSources(TeensyTimerToolDir + "/ErrorHandling/error_handler.cpp")>
+%<LibAddToModelSources(TeensyTimerToolDir + "/API/Timer.cpp")>
+%<LibAddToModelSources(TeensyTimerToolDir + "/API/baseTimer.cpp")>
+%<LibAddToModelSources(TeensyTimerToolDir + "/TimerModules/TCK/tickCounters.cpp")>
+%<LibAddToModelSources(TeensyTimerToolDir + "/TimerModules/TCK/TckChannelBase.cpp")>
+%<LibAddToModelSources(TeensyTimerToolDir + "/TimerModules/TCK/TCK.cpp")>
+%<LibAddToModelSources(TeensyTimerToolDir + "/TimerModules/RTC/RTCCPP.cpp")>
+%<LibAddToModelSources(TeensyTimerToolDir + "/TimerModules/PIT4/PIT.cpp")>
+%<LibAddToModelSources(TeensyTimerToolDir + "/TimerModules/GPT/GPTChannel.cpp")>

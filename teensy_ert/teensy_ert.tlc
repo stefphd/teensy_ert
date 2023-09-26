@@ -1,0 +1,98 @@
+%% SYSTLC: Teensy ERT Target TMF: teensy_ert.tmf MAKE: make_rtw \
+%% EXTMODE: ext_serial_win32_comm
+
+%selectfile NULL_FILE
+
+%assign CodeFormat = "Embedded-C"
+
+%assign TargetType = "RT"
+%assign Language   = "C"
+%assign AutoBuildProcedure = !GenerateSampleERTMain
+
+%% The model_SetEventsForThisBaseRate function is not required for the
+%% VxWorks environment, i.e., when using an operating system.
+%assign SuppressSetEventsForThisBaseRateFcn = (TargetOS == "VxWorksExample")
+%assign InlineSetEventsForThisBaseRateFcn  = TLC_TRUE
+%assign SuppressMultiTaskScheduler = TLC_TRUE
+%assign UseRTOS = TLC_FALSE
+%% %include "commontargetlib.tlc" no longeer supported from MATLAB2018
+%include "codegenentry.tlc"
+
+%% The contents between 'BEGIN_RTW_OPTIONS' and 'END_RTW_OPTIONS' in this file
+%% are used to maintain backward compatibility to R13 and preR13 custom target
+%% file only.  If you want to use this file as a template to develop your
+%% own system target file, you need to remove the 'CONFIGSET_TARGET_COMPONENT'
+%% section at the end of this file.
+%%
+/%
+  BEGIN_RTW_OPTIONS
+
+  rtwoptions(1).prompt         = 'Teensy Options';
+  rtwoptions(1).type           = 'Category';
+  rtwoptions(1).enable         = 'on';
+  rtwoptions(1).default        = 6;  % number of items under this category
+                                        % excluding this one.
+  rtwoptions(1).popupstrings  = '';
+  rtwoptions(1).tlcvariable   = '';
+  rtwoptions(1).tooltip       = '';
+  rtwoptions(1).callback      = '';
+  rtwoptions(1).opencallback  = '';
+  rtwoptions(1).closecallback = '';
+  rtwoptions(1).makevariable  = '';
+
+  rtwoptions(2).prompt        = 'Teensy Board';
+  rtwoptions(2).type          = 'Popup';
+  rtwoptions(2).default       = 'Teensy 4.1';
+  rtwoptions(2).popupstrings  = 'Teensy 3.2|Teensy 3.5|Teensy 3.6|Teensy 4.0|Teensy 4.1';
+  rtwoptions(2).tlcvariable   = 'TeensyBoard';
+  rtwoptions(2).tooltip       = sprintf(['Select your Teensy board']);
+
+  rtwoptions(3).prompt        = 'Timer Source';
+  rtwoptions(3).type          = 'Popup';
+  rtwoptions(3).default       = 'Pooling';
+  rtwoptions(3).popupstrings  = 'Pooling|Interval Timer';
+  rtwoptions(3).tlcvariable   = 'TimerSource';
+  rtwoptions(3).tooltip       = sprintf(['Select the timer source for Real-Time operations.']);
+
+  rtwoptions(4).prompt        = 'External Mode COM Port';
+  rtwoptions(4).type          = 'Popup';
+  rtwoptions(4).popupstrings  = 'COM1|COM2|COM3|COM4|COM5|COM6|COM7|COM8|COM9|COM10';
+  rtwoptions(4).tlcvariable   = 'TeensyExtPort';
+  rtwoptions(4).tooltip       = sprintf(['Select the COM port to employ for External Mode']);
+
+  rtwoptions(5).prompt         = 'External Mode Verbose Output';
+  rtwoptions(5).type           = 'Checkbox';
+  rtwoptions(5).default        = 'off';
+  rtwoptions(5).tlcvariable    = 'TeensyExtVerb';
+  rtwoptions(5).makevariable   = '';
+  rtwoptions(5).callback       = '';
+  rtwoptions(5).tooltip        = sprintf(['Enable verbose output for External Mode']); 
+
+  rtwoptions(6).prompt         = 'Makefile Parallel Execution';
+  rtwoptions(6).type           = 'Checkbox';
+  rtwoptions(6).default        = 'off';
+  rtwoptions(6).tlcvariable    = 'ParallelExecution';
+  rtwoptions(6).makevariable   = '';
+  rtwoptions(6).callback       = '';
+  rtwoptions(6).tooltip        = sprintf(['Uses ''-j'' option for the makefile.']); 
+  
+  rtwoptions(7).prompt         = 'Compiler Options';
+  rtwoptions(7).type           = 'Edit';
+  rtwoptions(7).default        = '';
+  rtwoptions(7).tlcvariable    = 'DialogOptions';
+  rtwoptions(7).makevariable   = 'DIALOG_OPTIONS';
+  rtwoptions(7).callback       = '';
+  rtwoptions(7).tooltip        = sprintf(['Options passed directly to arm-none-gcc compiler.']);
+
+  %------------------------------------%
+  % Configure code generation settings %
+  %------------------------------------%
+  
+  rtwgensettings.BuildDirSuffix = teensy_ert_get_build_dir_suffix(bdroot);
+  rtwgensettings.Version = '1';
+  rtwgensettings.DerivedFrom = 'ert.tlc';
+  rtwgensettings.PostApplyCallback = 'teensy_ert_apply_callback_handler(hDlg, hSrc)';
+  rtwgensettings.SelectCallback = 'teensy_ert_select_callback_handler(hDlg, hSrc)';
+
+  END_RTW_OPTIONS
+ %/
