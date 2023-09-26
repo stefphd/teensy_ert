@@ -65,7 +65,7 @@ In the standalone execution the model is compiled and uploaded to the board "as 
 
 To build the application for the standalone execution click on "Build, Deploy & Start" button in the Hardware toolstrip.
 
-![standalone.png](resources\standalone.png)
+![standalone.JPG](resources\standalone.JPG)
 
 ### External mode
 
@@ -76,7 +76,7 @@ To build the application for the external mode click on "Monitor & Tune" button 
 
 Warning: USB-Serial blocks are not used when using external mode.
 
-![extmode.png](resources\extmode.png)
+![extmode.JPG](resources\extmode.JPG)
 
 <img title="" src="resources/optsettings.JPG" alt="optsettings.JPG" data-align="center" width="454">
 
