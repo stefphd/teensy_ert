@@ -1,4 +1,3 @@
-/* Copyright 2013-2014 The MathWorks, Inc. */
 /*
  *   sfunar_serialConfig.c Simple C-MEX S-function for function call.
  *

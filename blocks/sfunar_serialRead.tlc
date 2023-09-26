@@ -4,8 +4,6 @@
 %%   Code generation file for sfunar_serialRead
 %%
 
-%% Copyright 2010-2014 The MathWorks, Inc.
-
 %implements sfunar_serialRead "C"
 
 %include "block_common_includes.tlc"
