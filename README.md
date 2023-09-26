@@ -37,11 +37,11 @@ The steps for getting started with the library are:
 
 * Go to Modeling > Model Settings > Code Generation and select "Teensy_ert.tlc" as the System target file
   
-  <img title="" src="resources\codegensettings.JPG" alt="codegensettings.JPG" width="443" data-align="center">
+  <img title="" src="resources/codegensettings.JPG" alt="codegensettings.JPG" width="443" data-align="center">
 
 * Go to Teensy Options and configure the settings according to your hardware
   
-  <img title="" src="resources\teensysettings.JPG" alt="teensysettings.JPG" width="460" data-align="center">
+  <img title="" src="resources/teensysettings.JPG" alt="teensysettings.JPG" width="460" data-align="center">
 
 * Go in App and select "Run on Custom Hardware". A new toolstrip "Hardware" will appear.
 
@@ -65,7 +65,7 @@ In the standalone execution the model is compiled and uploaded to the board "as 
 
 To build the application for the standalone execution click on "Build, Deploy & Start" button in the Hardware toolstrip.
 
-![standalone.JPG](resources\standalone.JPG)
+![standalone.JPG](resources/standalone.JPG)
 
 ### External mode
 
@@ -76,7 +76,7 @@ To build the application for the external mode click on "Monitor & Tune" button 
 
 Warning: USB-Serial blocks are not used when using external mode.
 
-![extmode.JPG](resources\extmode.JPG)
+![extmode.JPG](resources/extmode.JPG)
 
 <img title="" src="resources/optsettings.JPG" alt="optsettings.JPG" data-align="center" width="454">
 
