@@ -6,6 +6,7 @@ The library is built upon the [Embedded Coder Target for Arduino](https://it.mat
 The library implements both standalone and external mode execution. However, Processor-In-the-Loop (PIL) and Software-In-the-Loop (SIL) are not available.
 
 Author: Stefano Lovato (<a href="mailto:stefano.lovato.1@phd.unipd.it">stefano.lovato.1@phd.unipd.it</a>)
+
 Year: 2023
 
 ## Requirements
@@ -147,3 +148,7 @@ The following blocks are not implemented yet:
 * Interrupt counters
 
 * Serial read bytes (w/ fixed number of bytes)
+
+## TODO list 
+
+* use USB_DUAL_SERIAL for external mode, with SerialUSB1 used for target-host communication, in order to keep the standard Serial available
