@@ -154,3 +154,5 @@ The following blocks are not implemented yet:
 ## TODO list 
 
 * use USB_DUAL_SERIAL for external mode, with SerialUSB1 used for target-host communication, in order to keep the standard Serial available
+* add millis and micros
+* add clock function in seconds (floats) (with start time at the model start)
