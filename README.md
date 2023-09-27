@@ -24,7 +24,6 @@ Requirements are:
 To install the Embedded Coder Target for Teensy, you need to:
 
 * Place the library folder in a stable path without spaces
-
 * Open MATLAB, go to the library folder and run "setup_teensy_target.m". This script adds the library folder to the MATLAB path and set the development environment.
 
 ## Getting Started
@@ -32,24 +31,15 @@ To install the Embedded Coder Target for Teensy, you need to:
 The steps for getting started with the library are:
 
 * Create a new Simulink (blank) model and save it
-
 * Go to solver and set the stop time to "inf", the Solver type to "Fixed-step" with "Discrete (no continous states)
   <img title="" src="resources/solversettings.JPG" alt="Screenshot" width="589" data-align="center">
-
 * In Solver details set the fixed-step size as you need
-
-* Go to Modeling > Model Settings > Code Generation and select "Teensy_ert.tlc" as the System target file
-  
+* Go to Modeling > Model Settings > Code Generation and select "Teensy_ert.tlc" as the System target file  
   <img title="" src="resources/codegensettings.JPG" alt="codegensettings.JPG" width="443" data-align="center">
-
-* Go to Teensy Options and configure the settings according to your hardware
-  
+* Go to Teensy Options and configure the settings according to your hardware 
   <img title="" src="resources/teensysettings.JPG" alt="teensysettings.JPG" width="460" data-align="center">
-
 * Go in App and select "Run on Custom Hardware". A new toolstrip "Hardware" will appear.
-
 * Built your model using the library blocks
-
 * Click on "Build, Deploy & Start" to build and deploy the standalone application on the hardware, or on "Minotor & Tune"" to run the external mode.
 
 You may also look at "./demos" for examples.
@@ -59,7 +49,6 @@ You may also look at "./demos" for examples.
  Two execution modes are available:
 
 * Standalone execution
-
 * External mode for monitor and tuning the application
 
 ### Standalone execution
@@ -92,13 +81,9 @@ In Modeling > Model Settings > Code Generation > Teensy Options you can select o
 Possible Teensy boards are:
 
 * Teensy 4.1
-
 * Teensy 4.0 (Not tested)
-
 * Teensy 3.6 (Not tested)
-
 * Teensy 3.5 (Not tested)
-
 * Teensy 3.2 (Not tested)
 
 ### Timer Source
@@ -106,7 +91,6 @@ Possible Teensy boards are:
 The timing of the task can be provided by:
 
 * Software timer (Pooling method)
-
 * Hardare interrupt timer (Interval Timer method)
 
 ### External Mode COM Port
@@ -130,25 +114,17 @@ Add here additional compiler options (for advanced usage). Keep it empty by defa
 Implemented Simulink Blocks include:
 
 * Digital read
-
 * Digitial write
-
 * Analog read & Analog Resolution
-
 * PWM Output & PWM Resolution
-
 * Serial config, write & read
-
 * CPU Temp read
 
 The following blocks are not implemented yet:
 
 * I2C begin, write & read
-
 * SD file open, write & close
-
 * Interrupt counters
-
 * Serial read bytes (w/ fixed number of bytes)
 
 ## TODO list 
