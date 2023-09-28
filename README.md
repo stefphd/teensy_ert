@@ -135,6 +135,7 @@ The following blocks are not implemented yet:
 ## TODO list 
 
 * Implement Serial read bytes block
-* Implement Interrupt block
+* Change Serial writie to Serial Transmit and Serial read bytes to Serial Receive, add status port for Serial Receive, remove Serial read (blocks similar to the Arduino Support Package for Simulink)
+* Implement Interrupt block, see also Arduino Support Package for Simulink 
 * Implement I2C begin, write, & read
 * Example of implementation of write & read sensors: using library vs. using I2C blocks
