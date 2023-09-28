@@ -28,9 +28,6 @@
   %if !SLibCodeGenForSim()
     %assign u1_dim1_val = LibBlockInputSignalWidth(0)
     %assign p1_val = CAST("Number", LibBlockParameterValue(p1,0)) - 1
-    %if ExtMode && p1_val == 0
-      %return
-    %endif
     %if p1_val == 0
       %assign Serial = "Serial"
     %else
