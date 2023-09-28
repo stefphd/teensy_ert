@@ -1,4 +1,4 @@
-# Embedded Coder Target for Teensy
+# Simulink Embedded Coder Target for Teensy
 
 The Embedded Coder Target for Teensy provides a library to use Teensy 3.X and 4.X boards with code generated from Simulink, using the Embedded coder. The library provides the typical blocks for input & output and other utilities.
 The library is built upon the [Embedded Coder Target for Arduino](https://it.mathworks.com/matlabcentral/fileexchange/30277-embedded-coder-target-for-arduino).
