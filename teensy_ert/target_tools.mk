@@ -5,8 +5,15 @@ LOCAL_GCC_TOOLS_PATH = $(TOOL_ROOT)/arm/bin
 
 LOCAL_OPT       = -g -O2 -Wall -ffunction-sections -fdata-sections $(DIALOG_OPTIONS)
 
-OPTIONS = -DF_CPU=$(F_CPU) -DUSB_SERIAL -DLAYOUT_US_ENGLISH -DUSING_MAKEFILE
+OPTIONS = -DF_CPU=$(F_CPU) -DLAYOUT_US_ENGLISH -DUSING_MAKEFILE
 OPTIONS += -D__$(MCU)__ -DARDUINO=10813 -DTEENSYDUINO=159 -D$(MCU_DEF)
+
+# External mode uses dual serial
+ifeq ($(EXT_MODE),1)
+OPTIONS += -DUSB_DUAL_SERIAL
+else
+OPTIONS += -DUSB_SERIAL
+endif
 
 LOCAL_CDEFS     = $(OPTIONS) -D__true_false_are_keywords -Dtrue=0x1 -Dfalse=0x0 -DEXIT_FAILURE=1
 LOCAL_CXXDEFS   = $(OPTIONS) -D__true_false_are_keywords -Dtrue=0x1 -Dfalse=0x0

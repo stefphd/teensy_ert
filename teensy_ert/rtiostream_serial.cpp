@@ -8,6 +8,12 @@ extern "C" {
 #include "rtiostream.h"
 }
 
+#ifndef USB_DUAL_SERIAL
+#error "USB_DUAL_SERIAL must be used for External mode"
+#endif
+
+#define SERIALINTERFACE SerialUSB1
+
 /***************** VISIBLE FUNCTIONS ******************************************/
 
 /* Function: rtIOStreamOpen =================================================
@@ -16,7 +22,7 @@ extern "C" {
  */
 int rtIOStreamOpen(int argc, void * argv[])
 {    
-    Serial.begin(4000000);
+    //SERIALINTERFACE.begin(4000000); // NOT REQUIRED
 
     return RTIOSTREAM_NO_ERROR;
 }
@@ -32,7 +38,7 @@ int rtIOStreamSend(
     size_t       size,
     size_t     * sizeSent)
 {
-    Serial.write( (const uint8_t *)src, (int16_t)size);
+    SERIALINTERFACE.write( (const uint8_t *)src, (int16_t)size);
     *sizeSent = size;
     return RTIOSTREAM_NO_ERROR;
 }
@@ -53,7 +59,7 @@ int rtIOStreamRecv(
     *sizeRecvd=0U;
 
     while ((*sizeRecvd < size)) {
-        data = Serial.read();
+        data = SERIALINTERFACE.read();
         if (data != -1) {
             *ptr++ = (uint8_t) data;
             (*sizeRecvd)++;

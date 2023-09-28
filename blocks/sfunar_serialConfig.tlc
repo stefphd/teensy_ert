@@ -23,9 +23,6 @@
   %%
   %assign p1_val = CAST("Number", LibBlockParameterValue(p1,0)) - 1
   %assign p2_val = LibBlockParameterValue(p2,0)
-  %if ExtMode && p1_val == 0
-      %return
-  %endif
   %if p1_val == 0
       %assign Serial = "Serial"
   %else
