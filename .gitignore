@@ -15,3 +15,6 @@
 
 # Build directory
 demos/*_ert*
+demos/slprj
+demos/*.slxc
+demos/*slx.original
