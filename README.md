@@ -61,12 +61,12 @@ To build the application for the standalone execution click on "Build, Deploy & 
 
 ### External mode
 
-In the external mode the model is compiled and uploaded to the board, together with a communication protocol to interface the host PC with the target board. 
+In the external mode the model is compiled and uploaded to the board, together with a communication protocol to interface the host PC with the target board using the USB-Serial interface. 
 During the exection the tasks performed are the model step and the external communication with the host PC, which allows to monitor the application signals and tune the tunable parameter in runtime. This execution mode is the preferred one for testing and debugging.
 
 To build the application for the external mode click on "Monitor & Tune" button in button in the Hardware toolstrip. In addition, you may change the "Default parameter behaviour" to "Tunable" in Modeling > Model Settings > Code Generation > Optimization, in order to make the parameter tuning available (when possible).
 
-Warning: USB-Serial blocks are not used when using external mode.
+Note that when building the application in external mode, the Dual Serial is employed, i.e. two COM ports will be visible, with typically the second one dedicated for the external mode communication. Therefore the usb-serial blocks works also with the external mode enabled.
 
 ![extmode.JPG](resources/extmode.JPG)
 
@@ -95,7 +95,9 @@ The timing of the task can be provided by:
 
 ### External Mode COM Port
 
-To use the external mode, you need to configure this option according to the COM port assigned to your Teensy board. Available COM ports are from COM0 to COM10 (if necessar, you can use the Windows Device Manager to assign one of this COM port to the board).
+To use the external mode, you need to configure this option according to the COM port assigned to your Teensy board with the Dual Serial enabled. Available COM ports are from COM0 to COM10 (if necessary, you can use the Windows Device Manager to assign one of this COM port to the board).
+
+To identify the COM port employed with the Dual Serial enabled, run the model in external mode and after the model has been deployed on the target hardware, run in MATLAB " serialportlist("available")". This show you the available serial (COM) ports: you need to identify which of them is the one dedicated for the external mode by try and error.
 
 ### External Mode Verbose Output
 
@@ -119,6 +121,9 @@ Implemented Simulink Blocks include:
 * PWM Output & PWM Resolution
 * Serial config, write & read
 * CPU Temp read
+* Millis & Micros
+* Clock (in seconds)
+* Overrun counter
 
 The following blocks are not implemented yet:
 
@@ -129,6 +134,7 @@ The following blocks are not implemented yet:
 
 ## TODO list 
 
-* use USB_DUAL_SERIAL for external mode, with SerialUSB1 used for target-host communication, in order to keep the standard Serial available
-* add millis and micros
-* add clock function in seconds (floats) (with start time at the model start)
+* Implement Serial read bytes block
+* Implement Interrupt block
+* Implement I2C begin, write, & read
+* Example of implementation of write & read sensors: using library vs. using I2C blocks
