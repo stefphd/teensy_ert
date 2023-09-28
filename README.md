@@ -9,7 +9,7 @@ Author: Stefano Lovato (<a href="mailto:stefano.lovato.1@phd.unipd.it">stefano.l
 
 Year: 2023
 
-[![View Simulink Embedded Coder Target for Teensy on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://it.mathworks.com/matlabcentral/fileexchange/135917-simulink-embedded-coder-target-for-teensy)
+[![View Simulink Embedded Coder Target for Teensy on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://it.mathworks.com/matlabcentral/fileexchange/135922-simulink-embedded-coder-target-for-teensy)
 
 ## Requirements
 
