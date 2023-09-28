@@ -1,0 +1,64 @@
+%% File : sfunar_overrunCounter.tlc
+%%
+%% Description: 
+%%   Code generation file for sfunar_overrunCounter
+%%
+
+%implements sfunar_overrunCounter "C"
+
+%include "block_common_includes.tlc"
+
+%assign modelC = LibGetModelDotCFile() 
+%assign tmpBuf = "uint8_T GetOverrunCounter(void);"
+%<LibSetSourceFileSection(modelC, "Declarations", tmpBuf)>
+
+%% Function: BlockTypeSetup ===============================================
+%function BlockTypeSetup(block, system) void
+
+  %% Ensure required header files are included
+  %<ArduinoCommonBlockTypeSetup(block, system)>
+  
+%endfunction
+
+%% Function: BlockInstanceSetup ===========================================
+%%
+%function BlockInstanceSetup(block, system) void
+  %%
+  %% Function accepts expression as parameter
+  %<LibBlockSetIsExpressionCompliant(block)>
+  %%
+%endfunction
+
+
+%% Function: Outputs ======================================================
+%%
+%function Outputs(block, system) Output
+
+  %if !SLibCodeGenForSim()
+    %assign y1_val = LibBlockOutputSignal(0, "", "", 0)
+    %%
+    %<y1_val> = GetOverrunCounter();
+  %endif
+
+%endfunction
+
+%% Function: BlockOutputSignal ============================================
+%%
+%function BlockOutputSignal(block,system,portIdx,ucv,lcv,idx,retType) void
+  %%
+  %switch retType
+    %case "Signal"
+      %if portIdx == 0
+            %return "GetOverrunCounter()"
+      %else
+        %assign errTxt = "Block output port index not supported: %<portIdx>"
+        %<LibBlockReportError(block,errTxt)>
+      %endif
+    %default
+      %assign errTxt = "Unsupported return type: %<retType>"
+      %<LibBlockReportError(block,errTxt)>
+  %endswitch
+  %%
+%endfunction
+
+%% [EOF]
