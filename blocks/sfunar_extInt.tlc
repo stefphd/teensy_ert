@@ -1,0 +1,133 @@
+%%
+%% Abstract:
+%%      Arduino Asynchronous Interrupt Block
+
+%implements "sfunar_extInt" "C"
+
+%include "block_common_includes.tlc" 
+
+%% Function: BlockTypeSetup ===============================================
+%%
+%function BlockTypeSetup(block, system) void
+  %%
+  %% Ensure required header files are included
+  %<ArduinoCommonBlockTypeSetup(block, system)>
+  %%
+%endfunction
+
+%% ========================================================================
+%% Function: BlockInstanceSetup
+%% Abstract:
+%%      Setup ISR function names. Warn if output not connected.
+%% ========================================================================
+
+%function BlockInstanceSetup(block, system) void
+    %% %addtorecord SFcnParamSettings ISRNames []
+    %openfile buffer
+    %% The element is not connected to anything
+    %if LibIsEqual(SFcnSystemOutputCall[0].BlockToCall, "unconnected")
+        %assign wrnTxt = "No code will be generated for interrupt int.%<SFcnParamSettings.Pin> "\
+                         "since it is not connected to a system."
+        %<LibReportWarning(wrnTxt)>
+    %endif
+
+    %assign Pin = SFcnParamSettings.Pin
+    void cbISR_%<Pin>(void);
+    %closefile buffer
+    %<LibCacheFunctionPrototype(buffer)>
+%endfunction
+      
+      
+%% ========================================================================
+%% Function: Outputs 
+%% Abstract:
+%%      Create the ISR function. Lock-out interrupts in the ISR's critical code
+%%      section if the ISR is configured as non-preemptive. Save the context in
+%%      ISR's critical code section (unless the ISR represents the Task block).
+%% ========================================================================
+
+%function Outputs(block, system) Output
+    %foreach callIdx = NumSFcnSysOutputCalls
+
+        %if LibIsEqual(SFcnSystemOutputCall[0].BlockToCall, "unconnected")
+            %continue
+        %endif
+
+        %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %% Get the downstream block
+        %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+        %assign ssBlock = LibGetFcnCallBlock(block,callIdx)
+
+        %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %% Call the downstream f-c subsystem, it can inline
+        %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+        %openfile tmpBuf
+            %<LibBlockExecuteFcnCall(block, callIdx)>\
+        %closefile tmpBuf
+
+        %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %% Always create the ISR function
+        %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+        %openfile funcbuf
+            /* Callback for Hardware Interrupt Block: '%<Name>' */
+            %assign Pin = SFcnParamSettings.Pin
+            void cbISR_%<Pin>(void)
+            {
+            %if WHITE_SPACE(tmpBuf)
+	            /* Nothing to do for system: %<ssBlock.Name> */
+            %else
+	            %% Manage the async counter
+	            %if LibManageAsyncCounter(block,callIdx)
+                    /* Use millis() as a portable tick counter example. */
+                    %<LibSetAsyncClockTicks(block, callIdx, "millis()", "")>
+	            %endif
+	            /* Call the system: %<ssBlock.Name> */
+	            %<tmpBuf>\
+            %endif
+            }
+        %closefile funcbuf
+
+        %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+        %assign srcFile = LibGetModelDotCFile()
+        %<LibSetSourceFileSection(srcFile, "Functions", funcbuf)>
+
+    %endforeach
+%endfunction
+
+
+%% ========================================================================
+%% Function: Start 
+%% Abstract:
+%%      Connect and enable each ISR in the model's start function.
+%% ========================================================================
+
+%function Start(block, system) Output
+    %%
+    %assign Pin  = SFcnParamSettings.Pin
+    %assign Mode = SFcnParamSettings.Mode
+    %assign Pin  = SFcnParamSettings.Pin
+    %assign Pinmode = SFcnParamSettings.Pinmode
+
+    %if !LibIsEqual(SFcnSystemOutputCall[0].BlockToCall, "unconnected")
+        pinMode(%<Pin>, %<Pinmode>);
+        /* Attach callback function */
+        attachInterrupt(%<Pin>, &cbISR_%<Pin>, %<Mode>);
+    %endif
+    %%
+%endfunction
+
+%% ========================================================================
+%% Function: Terminate 
+%% Abstract:
+%%      Disable each ISR in the model's terminate function.
+%% ========================================================================
+
+%function Terminate(block, system) Output
+    %% Nothing to do here since we never leave main loop
+%endfunction
+
+%% [EOF]
