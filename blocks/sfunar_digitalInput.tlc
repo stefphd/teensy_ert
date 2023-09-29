@@ -34,10 +34,13 @@
   %switch p2.Value[0]
       %case 1
   	    pinMode(%<p1_val>, INPUT);
+        %break
       %case 2
   	    pinMode(%<p1_val>, INPUT_PULLUP);
+        %break
       %case 3
   	    pinMode(%<p1_val>, INPUT_PULLDOWN);
+        %break
   %endswitch
   %%
 %endif
