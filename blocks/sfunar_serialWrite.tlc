@@ -26,19 +26,19 @@
 %function Outputs(block, system) Output
 
   %if !SLibCodeGenForSim()
-    %assign u1_dim1_val = LibBlockInputSignalWidth(0)
+    %assign u1_dim = LibBlockInputSignalWidth(0)
     %assign p1_val = CAST("Number", LibBlockParameterValue(p1,0)) - 1
     %if p1_val == 0
       %assign Serial = "Serial"
     %else
       %assign Serial = "Serial%<p1_val>" 
     %endif
-    %if u1_dim1_val == 1
+    %if u1_dim == 1
         %assign u1 = LibBlockInputSignal(0, "", "", 0)
         %<Serial>.write( %<u1>);
     %else
         %assign u1_ptr = LibBlockInputSignalAddr(0, "", "", 0)
-        %<Serial>.write( %<u1_ptr>, (int16_T)%<u1_dim1_val>);
+        %<Serial>.write( %<u1_ptr>, (uint32_T) %<u1_dim>);
     %endif
   %endif
 

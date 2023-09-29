@@ -44,9 +44,20 @@ static void mdlCheckParameters(SimStruct *S)
   }
 
   /*
-   * Check the parameter 1
+   * Check the parameter 2
    */
   if EDIT_OK(S, 1) {
+    int_T dimsArray[2] = { 1, 1 };
+
+    /* Check the parameter attributes */
+    ssCheckSFcnParamValueAttribs(S, 0, "P2", DYNAMICALLY_TYPED, 2, dimsArray, 0);
+  }
+
+
+  /*
+   * Check the parameter 3
+   */
+  if EDIT_OK(S, 2) {
     int_T dimsArray[2] = { 1, 1 };
 
     /* Check the parameter attributes */
@@ -64,7 +75,7 @@ static void mdlCheckParameters(SimStruct *S)
 static void mdlInitializeSizes(SimStruct *S)
 {
   /* Number of expected parameters */
-  ssSetNumSFcnParams(S, 2);
+  ssSetNumSFcnParams(S, 3);
 
 #if defined(MATLAB_MEX_FILE)
 
@@ -88,6 +99,8 @@ static void mdlInitializeSizes(SimStruct *S)
 
   /* Set the parameter's tunable status */
   ssSetSFcnParamTunable(S, 0, SS_PRM_NOT_TUNABLE);
+  ssSetSFcnParamTunable(S, 1, SS_PRM_NOT_TUNABLE);
+  ssSetSFcnParamTunable(S, 2, SS_PRM_NOT_TUNABLE);
 
   ssSetNumPWork(S, 0);
 
@@ -166,7 +179,7 @@ static void mdlInitializeSampleTimes(SimStruct *S)
 static void mdlSetWorkWidths(SimStruct *S)
 {
   /* Set number of run-time parameters */
-  if (!ssSetNumRunTimeParams(S, 2))
+  if (!ssSetNumRunTimeParams(S, 3))
     return;
 
   /*
@@ -178,6 +191,12 @@ static void mdlSetWorkWidths(SimStruct *S)
    * Register the run-time parameter 2
    */
   ssRegDlgParamAsRunTimeParam(S, 1, 1, "p2", ssGetDataTypeId(S, "uint32"));
+
+
+  /*
+   * Register the run-time parameter 3
+   */
+  ssRegDlgParamAsRunTimeParam(S, 2, 2, "p3", ssGetDataTypeId(S, "uint32"));
 }
 
 #endif

@@ -23,6 +23,7 @@
   %%
   %assign p1_val = CAST("Number", LibBlockParameterValue(p1,0)) - 1
   %assign p2_val = LibBlockParameterValue(p2,0)
+  %assign p3_val = LibBlockParameterValue(p3,0)
   %if p1_val == 0
       %assign Serial = "Serial"
   %else
@@ -31,7 +32,7 @@
   %%
     /* %<Type> (%<ParamSettings.FunctionName>): %<Name> */
   %<Serial>.begin(%<p2_val>);
-
+  %<Serial>.setTimeout(%<p3_val>);
   %%
 %endfunction
 

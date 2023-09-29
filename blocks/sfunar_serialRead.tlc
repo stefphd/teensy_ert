@@ -29,7 +29,8 @@
 %function Outputs(block, system) Output
 
   %if !SLibCodeGenForSim()
-    %assign y1_val = LibBlockOutputSignal(0, "", "", 0)
+    %assign y2_val = LibBlockOutputSignal(1, "", "", 0)
+    %assign y1_dim = LibBlockOutputSignalWidth(0)
     %assign p1_val = CAST("Number", LibBlockParameterValue(p1,0)) - 1
     %if p1_val == 0
       %assign Serial = "Serial"
@@ -37,10 +38,22 @@
       %assign Serial = "Serial%<p1_val>" 
     %endif
     %%
-    if (%<Serial>.available()) {
-      %<y1_val> = %<Serial>.read();
+    if (%<Serial>.available() >= %<y1_dim>) {
+      %if y1_dim == 1
+      %assign y1_val = LibBlockOutputSignal(0, "", "", 0)
+      int16_T %<y1_val>_tmp = %<Serial>.read();
+      if (%<y1_val>_tmp < 0) %<y2_val> = false;
+      else { 
+          %<y1_val> = %<y1_val>_tmp; 
+          %<y2_val> = true; 
+      }
+      %else
+      %assign y1_ptr = LibBlockOutputSignalAddr(0, "", "", 0)
+      if (%<Serial>.readBytes((char*) %<y1_ptr>, (uint32_T) %<y1_dim>) == %<y1_dim>) %<y2_val> = true;
+      else %<y2_val> = false; 
+      %endif
     } else {
-      %<y1_val> = -1;
+      %<y2_val> = false;
     }
   %endif
 

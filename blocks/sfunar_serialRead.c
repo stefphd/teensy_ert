@@ -20,7 +20,8 @@
 #include "simstruc.h"
 #define EDIT_OK(S, P_IDX) \
  (!((ssGetSimMode(S)==SS_SIMMODE_SIZES_CALL_ONLY) && mxIsEmpty(ssGetSFcnParam(S, P_IDX))))
-#define SAMPLE_TIME                    (ssGetSFcnParam(S, 1))
+#define SAMPLE_TIME                    (ssGetSFcnParam(S, 2))
+#define OUTPUT_SIZE                    ( *(uint32_T * ) mxGetPr((ssGetSFcnParam(S, 1))))
 
 /*
  * Utility function prototypes.
@@ -51,9 +52,19 @@ static void mdlCheckParameters(SimStruct *S)
   }
 
   /*
-   * Check the parameter 2 (sample time)
+   * Check the parameter 1
    */
   if EDIT_OK(S, 1) {
+    int_T dimsArray[2] = { 1, 1 };
+
+    /* Check the parameter attributes */
+    ssCheckSFcnParamValueAttribs(S, 0, "P1", DYNAMICALLY_TYPED, 2, dimsArray, 0);
+  }
+
+  /*
+   * Check the parameter 2 (sample time)
+   */
+  if EDIT_OK(S, 2) {
     const double *sampleTime = NULL;
     const size_t stArraySize = mxGetM(SAMPLE_TIME) * mxGetN(SAMPLE_TIME);
 
@@ -105,7 +116,7 @@ static void mdlCheckParameters(SimStruct *S)
 static void mdlInitializeSizes(SimStruct *S)
 {
   /* Number of expected parameters */
-  ssSetNumSFcnParams(S, 2);
+  ssSetNumSFcnParams(S, 3);
 
 #if defined(MATLAB_MEX_FILE)
 
@@ -130,6 +141,7 @@ static void mdlInitializeSizes(SimStruct *S)
   /* Set the parameter's tunable status */
   ssSetSFcnParamTunable(S, 0, SS_PRM_NOT_TUNABLE);
   ssSetSFcnParamTunable(S, 1, SS_PRM_NOT_TUNABLE);
+  ssSetSFcnParamTunable(S, 2, SS_PRM_NOT_TUNABLE);
 
   ssSetNumPWork(S, 0);
 
@@ -145,18 +157,28 @@ static void mdlInitializeSizes(SimStruct *S)
   /*
    * Set the number of output ports.
    */
-  if (!ssSetNumOutputPorts(S, 1))
+  if (!ssSetNumOutputPorts(S, 2))
     return;
 
   /*
    * Configure the output port 1
    */
-  ssSetOutputPortDataType(S, 0, SS_INT16);
-  ssSetOutputPortWidth(S, 0, 1);
+  ssSetOutputPortDataType(S, 0, SS_UINT8);
+  ssSetOutputPortWidth(S, 0, OUTPUT_SIZE);
   ssSetOutputPortComplexSignal(S, 0, COMPLEX_NO);
   ssSetOutputPortOptimOpts(S, 0, SS_REUSABLE_AND_LOCAL);
-  ssSetOutputPortOutputExprInRTW(S, 0, 1);
+  ssSetOutputPortOutputExprInRTW(S, 0, 0);
 
+
+  /*
+   * Configure the output port 2
+   */
+  ssSetOutputPortDataType(S, 1, SS_BOOLEAN);
+  ssSetOutputPortWidth(S, 1, 1);
+  ssSetOutputPortComplexSignal(S, 1, COMPLEX_NO);
+  ssSetOutputPortOptimOpts(S, 1, SS_REUSABLE_AND_LOCAL);
+  //ssSetOutputPortOutputExprInRTW(S, 1, 1);
+    
   /*
    * This S-function can be used in referenced model simulating in normal mode.
    */
@@ -232,7 +254,6 @@ static void mdlSetWorkWidths(SimStruct *S)
    * Register the run-time parameter 1
    */
   ssRegDlgParamAsRunTimeParam(S, 0, 0, "p1", ssGetDataTypeId(S, "uint8"));
-
 }
 
 #endif
