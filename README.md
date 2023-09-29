@@ -119,7 +119,8 @@ Implemented Simulink Blocks include:
 * Digitial write
 * Analog read & Analog Resolution
 * PWM Output & PWM Resolution
-* Serial config, write & read
+* Serial config, transmit & receive
+* External Interrupt
 * CPU Temp read
 * Millis & Micros
 * Clock (in seconds)
@@ -129,13 +130,8 @@ The following blocks are not implemented yet:
 
 * I2C begin, write & read
 * SD file open, write & close
-* Interrupt counters
-* Serial read bytes (w/ fixed number of bytes)
 
-## TODO list 
+## TODO list
 
-* Implement Serial read bytes block
-* Change Serial writie to Serial Transmit and Serial read bytes to Serial Receive, add status port for Serial Receive, remove Serial read (blocks similar to the Arduino Support Package for Simulink)
-* Implement Interrupt block, see also Arduino Support Package for Simulink 
 * Implement I2C begin, write, & read
 * Example of implementation of write & read sensors: using library vs. using I2C blocks
