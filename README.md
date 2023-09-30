@@ -128,6 +128,7 @@ Implemented Simulink Blocks include:
 
 The following blocks are not implemented yet:
 
+* Encoder read (with pin A & B)
 * I2C begin, write & read
 * SPI begin, read & write
 * SD file open, write & close
@@ -150,4 +151,4 @@ The library currently works for Windows (>=10) only. MacOS and Linux are not sup
 
 * Implement I2C begin, write, & read
 * Example of implementation of write & read sensors: using library vs. using I2C blocks
-* How to check for overrun when using the Hardware Timer with the Interval Timer library
+* In External Interrupt variables are not volatile: how to fix?
