@@ -3,7 +3,7 @@
 The Embedded Coder Target for Teensy provides a library to use Teensy 3.X and 4.X boards with code generated from Simulink, using the Embedded coder. The library provides the typical blocks for input & output and other utilities.
 The library is built upon the [Embedded Coder Target for Arduino](https://it.mathworks.com/matlabcentral/fileexchange/30277-embedded-coder-target-for-arduino).
 
-The library implements both standalone and external mode execution. However, Processor-In-the-Loop (PIL) and Software-In-the-Loop (SIL) are not available.
+The library implements both standalone and external mode execution. However, Processor-In-the-Loop (PIL), Software-In-the-Loop (SIL), and Hardware-In-the-Loop (HIL) are not available.
 
 Author: Stefano Lovato (<a href="mailto:stefano.lovato.1@phd.unipd.it">stefano.lovato.1@phd.unipd.it</a>)
 
@@ -124,14 +124,30 @@ Implemented Simulink Blocks include:
 * CPU Temp read
 * Millis & Micros
 * Clock (in seconds)
-* Overrun counter
+* Overrun counter (not working in Interval Timer mode)
 
 The following blocks are not implemented yet:
 
 * I2C begin, write & read
+* SPI begin, read & write
 * SD file open, write & close
+
+## Teensyduino version
+
+The library currently uses Teensyduino 1.8.5.
+
+The Teensy Core source code and the tool and compiler binaries are provided together with the library, in the folder "./teensy" and "./tools", respectively. However, you could also use your Teensyduino installation by changing the setup script "setup_teensy_target.m" as follow:
+
+* teensy_ert.Prefs.setToolPath('path/to/teensyduino/tools')
+
+* teensy_ert.Prefs.setCorePath('path/to/teensyduino/teensy')
+
+## Other platforms
+
+The library currently works for Windows (>=10) only. MacOS and Linux are not supported yet. However, with some modifications the library could be adapted to be used with other platforms.
 
 ## TODO list
 
 * Implement I2C begin, write, & read
 * Example of implementation of write & read sensors: using library vs. using I2C blocks
+* How to check for overrun when using the Hardware Timer with the Interval Timer library
