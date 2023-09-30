@@ -11,6 +11,7 @@ for i = 1:numel(list)
             fprintf('Building S-Function: %s\n', list(i).name);
             mex(list(i).name);
         catch
+			%put warning ???
         end
     end
     
