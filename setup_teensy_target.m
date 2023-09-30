@@ -18,9 +18,9 @@ function setup_teensy_target
 
 
     %% Build S-functions
-    %TODO
+    % Already built. Is it ok??? Run build_all_sfunctions from the root directory otherwise
 
-    %% Register PIL/ExtMode communication interface 
+    %% Register ExtMode communication interface 
     sl_refresh_customizations; %this is a MATLAB p-file
 
     %% Set path for Teensy tools
