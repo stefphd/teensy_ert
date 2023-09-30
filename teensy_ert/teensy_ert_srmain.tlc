@@ -61,6 +61,19 @@
   %else
     #include "IntervalTimer.h"
     IntervalTimer  mdlTimer;
+    /* Model step function callback */
+    volatile boolean is_cb_%<::CompiledModel.Name>_step_running = false;
+    void cb_%<::CompiledModel.Name>_step()
+    {   
+        if (is_cb_%<::CompiledModel.Name>_step_running) /* Overrun occured */
+        { 
+            if(uOverrunCounter < 255U) uOverrunCounter++;
+        }
+        is_cb_%<::CompiledModel.Name>_step_running = true;
+        /* Call model step */
+        %<LibCallModelStep(0)>
+        is_cb_%<::CompiledModel.Name>_step_running = false;
+    }
   %endif
 
   int main(void)
@@ -70,20 +83,6 @@
     /* initialize external mode */
     rtParseArgsForExtMode(0, NULL);
   %endif
-
-%if ! ISEQUAL(TimerSource, "Pooling")
-    %if !GenerateClassInterface
-    %assign stepFcnName = "%<CGMODEL_ACCESS("CGModel.getModelEntryFunctionName","Step", "")>"
-    %else
-        %if CGMODEL_ACCESS("CGModel.isCPPMappingEnabled")
-            %assign stepFcnName = "%<CGMODEL_ACCESS("CGModel.getModelEntryFunctionName","Step", "")>"
-        %else
-            %assign stepFcnName = "step"
-        %endif
-    %assign stepFcnName = %<::CPPObjectName>.%<stepFcnName>;
-    %endif
-    %assign stepFcnName = "%<CGMODEL_ACCESS("CGModel.getModelEntryFunctionName","Step", "")>"
-%endif
 
 /* Initialize model */
   %if !GenerateClassInterface
@@ -104,7 +103,7 @@
 %if ISEQUAL(TimerSource, "Pooling")
     oldTime = micros();
 %else
-    mdlTimer.begin(%<stepFcnName>, STEP_SIZE); /* Also starts the timer */
+    mdlTimer.begin(cb_%<::CompiledModel.Name>_step, STEP_SIZE); /* Also starts the timer */
 %endif
 
 /* Running Model*/
