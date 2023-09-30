@@ -2,19 +2,20 @@
 *.d
 
 # Compiled Object files
-*.o
-*.obj
+#*.o
+#*.obj
 
 # Precompiled Headers
-*.gch
-*.pch
+#*.gch
+#*.pch
 
 # Executables
-*.hex
-*.elf
+#*.hex
+#*.elf
 
-# Build directory
+# Build directory - Exclude these to exclude all obj, hex, etc...
 demos/*_ert*
 demos/slprj
 demos/*.slxc
 demos/*slx.original
+demos/*.slx.autosave
