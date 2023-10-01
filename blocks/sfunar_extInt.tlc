@@ -1,6 +1,6 @@
 %%
 %% Abstract:
-%%      Arduino Asynchronous Interrupt Block
+%%      Asynchronous Interrupt Block
 
 %implements "sfunar_extInt" "C"
 
@@ -126,7 +126,11 @@
 %% ========================================================================
 
 %function Terminate(block, system) Output
-    %% Nothing to do here since we never leave main loop
+    %%
+    %assign Pin  = SFcnParamSettings.Pin
+
+    /*Detach Interrupt */
+    detachInterrupt(%<Pin>);
 %endfunction
 
 %% [EOF]
