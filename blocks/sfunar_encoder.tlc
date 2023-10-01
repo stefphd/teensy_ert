@@ -1,0 +1,157 @@
+%% File : sfunar_encoder.tlc
+%%
+
+%implements "sfunar_encoder" "C"
+
+%include "block_common_includes.tlc"
+
+%% Function: BlockTypeSetup ===============================================
+%%
+%function BlockTypeSetup(block, system) void
+
+  %% Ensure required header files are included
+  %<ArduinoCommonBlockTypeSetup(block, system)>
+
+%endfunction
+
+%% Function: BlockInstanceSetup ===========================================
+%%
+%function BlockInstanceSetup(block, system) void
+  %%
+  %openfile buffer
+    %assign PinA = SFcnParamSettings.PinA
+    %assign PinB = SFcnParamSettings.PinB
+    %assign EnableB = SFcnParamSettings.EnableB
+    void cbEncoder_%<PinA>(void);
+    %if EnableB > 0
+    void cbEncoder_%<PinB>(void);
+    %endif
+  %closefile buffer
+  %<LibCacheFunctionPrototype(buffer)>
+
+%endfunction
+
+%% Function: Outputs ======================================================
+%%
+%function Outputs(block, system) Output
+    %%
+    %assign Reset = SFcnParamSettings.Reset
+    %assign PinA = SFcnParamSettings.PinA
+    %assign PinB = SFcnParamSettings.PinB
+    %assign EnableB = SFcnParamSettings.EnableB
+
+    %if !LibBlockOutputSignalIsExpr(0)
+      %assign y1_val = LibBlockOutputSignal(0, "", "", 0)
+      %assign x1_val = LibBlockDWork(DWork[0], "", "", 0)
+        %<y1_val> = %<x1_val>;
+        %if Reset > 1
+        /* Reset the counter */
+        %<x1_val> = 0;
+        %endif
+    %endif 
+
+    %% Create the ISR function(s)
+    %openfile funcbuf
+    %% %assign x1_val = LibBlockDWork(DWork[0], "", "", 0)
+
+    /* Encoder ISR for Pin %<PinA> */
+    void cbEncoder_%<PinA>(void) {
+        if (digitalRead(%<PinA>)) {
+          if (!digitalRead(%<PinB>)) %<x1_val>++;
+          else %<x1_val>--;
+        } else {
+          if (digitalRead(%<PinB>)) %<x1_val>++;
+          else %<x1_val>--;
+        }
+    }
+
+    %if EnableB > 0
+    /* Encoder ISR for Pin %<PinB> */
+    void cbEncoder_%<PinB>(void) {
+        if (digitalRead(%<PinB>)) {
+          if (digitalRead(%<PinA>)) %<x1_val>++;
+          else %<x1_val>--;
+        } else {
+          if (!digitalRead(%<PinA>)) %<x1_val>++;
+          else %<x1_val>--;
+        }
+    }
+    %endif
+
+    %closefile funcbuf
+
+    %assign srcFile = LibGetModelDotCFile()
+    %<LibSetSourceFileSection(srcFile, "Functions", funcbuf)>
+
+%endfunction
+
+%% Function: Start ========================================================
+%%
+%function Start(block, system) Output
+    %%
+    %assign PinA = SFcnParamSettings.PinA
+    %assign PinB = SFcnParamSettings.PinB
+    %assign Mode = SFcnParamSettings.Mode
+    %assign Pinmode = SFcnParamSettings.Pinmode
+    %assign EnableB = SFcnParamSettings.EnableB
+
+    /* Set the pin mode */
+    pinMode(%<PinA>, %<Pinmode>);
+    pinMode(%<PinB>, %<Pinmode>);
+    /* Attach callback function */
+    attachInterrupt(%<PinA>, &cbEncoder_%<PinA>, %<Mode>);
+    %if EnableB > 0
+    attachInterrupt(%<PinB>, &cbEncoder_%<PinB>, %<Mode>);
+    %endif
+    /* Reset counter */
+    %assign x1_val = LibBlockDWork(DWork[0], "", "", 0)
+    %<x1_val> = 0;
+%endfunction
+
+
+%% Function: BlockOutputSignal =================================================
+%% Abstract:
+%%      Return an output expression.  This function *may*
+%%      be used by Simulink when optimizing the Block IO data structure.
+%%
+%function BlockOutputSignal(block,system,portIdx,ucv,lcv,idx,retType) void
+  
+  %assign retVal = "0"
+  %if !SLibCodeGenForSim()
+    %switch retType
+        %case "Signal"
+        %assign retVal = "1"
+        %break
+      %default
+        %assign errTxt = "Unsupported return type: %<retType>"
+        %<LibBlockReportError(block,errTxt)>
+        %break
+    %endswitch
+  %endif
+  %return retVal
+  
+%endfunction
+
+
+%% ========================================================================
+%% Function: Terminate 
+%% Abstract:
+%%      Disable each ISR in the model's terminate function.
+%% ========================================================================
+
+%function Terminate(block, system) Output
+    %%
+    %assign PinA  = SFcnParamSettings.PinA
+    %assign PinB  = SFcnParamSettings.PinB
+    %assign EnableB = SFcnParamSettings.EnableB
+
+    /*Detach Interrupt */
+    detachInterrupt(%<PinA>);
+    %if EnableB > 0
+    detachInterrupt(%<PinB>);
+    %endif
+    
+%endfunction
+
+%% [EOF]
+

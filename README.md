@@ -125,10 +125,10 @@ Implemented Simulink Blocks include:
 * Millis & Micros
 * Clock (in seconds)
 * Overrun counter (not working in Interval Timer mode)
+* Encoder read
 
 The following blocks are not implemented yet:
 
-* Encoder read (with pin A & B)
 * I2C begin, write & read
 * SPI begin, read & write
 * SD file open, write & close
