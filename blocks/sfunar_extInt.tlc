@@ -109,7 +109,6 @@
     %%
     %assign Pin  = SFcnParamSettings.Pin
     %assign Mode = SFcnParamSettings.Mode
-    %assign Pin  = SFcnParamSettings.Pin
     %assign Pinmode = SFcnParamSettings.Pinmode
 
     %if !LibIsEqual(SFcnSystemOutputCall[0].BlockToCall, "unconnected")
