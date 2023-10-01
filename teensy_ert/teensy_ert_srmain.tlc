@@ -35,7 +35,7 @@
 
   %openfile tmpBuf
   /* Overrun counter */
-  static uint8_t uOverrunCounter;
+  static volatile uint8_t uOverrunCounter;
 
   uint8_t GetOverrunCounter(void)
   {
