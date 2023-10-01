@@ -62,17 +62,22 @@
     #include "IntervalTimer.h"
     IntervalTimer  mdlTimer;
     /* Model step function callback */
-    volatile boolean is_cb_%<::CompiledModel.Name>_step_running = false;
-    void cb_%<::CompiledModel.Name>_step()
+    volatile boolean OverrunFlag = 0;
+    void rt_OneStep(void)
     {   
-        if (is_cb_%<::CompiledModel.Name>_step_running) /* Overrun occured */
-        { 
-            if(uOverrunCounter < 255U) uOverrunCounter++;
-        }
-        is_cb_%<::CompiledModel.Name>_step_running = true;
+		/* First check  OverrunFlag, then increment! */
+		if (OverrunFlag) {
+			if(uOverrunCounter < 255U) uOverrunCounter++;
+			/* Return b/c step not finished */
+			return;
+		}
+		OverrunFlag = 1;
+		
         /* Call model step */
         %<LibCallModelStep(0)>
-        is_cb_%<::CompiledModel.Name>_step_running = false;
+        
+		/* Reset OverrunFlag */
+		OverrunFlag = 0;
     }
   %endif
 
@@ -103,15 +108,15 @@
 %if ISEQUAL(TimerSource, "Pooling")
     oldTime = micros();
 %else
-    mdlTimer.begin(cb_%<::CompiledModel.Name>_step, STEP_SIZE); /* Also starts the timer */
+    mdlTimer.begin(rt_OneStep, STEP_SIZE); /* Also starts the timer */
 %endif
 
 /* Running Model*/
     while (true) {
+		if (!(%<ERTStopCheck()>)) {
+			break;
+		}
         %if ExtMode
-            if (!(%<ERTStopCheck()>)) {
-                break;
-            }
  	        %<FcnGenerateExtModeOneStep()>
         %endif
 
@@ -145,6 +150,7 @@
 
 /* Terminate model */
     %if ! ISEQUAL(TimerSource, "Pooling")
+		/* Stop the timer */
         mdlTimer.end();
     %endif
     
