@@ -38,7 +38,7 @@ static void mdlInitializeSizes(SimStruct *S)
 
 
   /*
-   * Set the number of pworks.
+   * Set the number of dworks.
    */
   ssSetNumDWork(S, 1);
   ssSetDWorkWidth(S, 0, 1);
