@@ -50,7 +50,7 @@ static void mdlCheckParameters(SimStruct *S)
     int_T dimsArray[2] = { 1, 1 };
 
     /* Check the parameter attributes */
-    ssCheckSFcnParamValueAttribs(S, 0, "P2", DYNAMICALLY_TYPED, 2, dimsArray, 0);
+    ssCheckSFcnParamValueAttribs(S, 1, "P2", DYNAMICALLY_TYPED, 2, dimsArray, 0);
   }
 
 
@@ -61,7 +61,7 @@ static void mdlCheckParameters(SimStruct *S)
     int_T dimsArray[2] = { 1, 1 };
 
     /* Check the parameter attributes */
-    ssCheckSFcnParamValueAttribs(S, 0, "P2", DYNAMICALLY_TYPED, 2, dimsArray, 0);
+    ssCheckSFcnParamValueAttribs(S, 2, "P3", DYNAMICALLY_TYPED, 2, dimsArray, 0);
   }
 }
 
