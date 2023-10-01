@@ -147,8 +147,14 @@ The Teensy Core source code and the tool and compiler binaries are provided toge
 
 The library currently works for Windows (>=10) only. MacOS and Linux are not supported yet. However, with some modifications the library could be adapted to be used with other platforms.
 
+## External Interrupt
+
+When using the External Interrupt block, you need to connect a subsystem which is run when the interrupt is triggered. If the subsystem contains states, you need also to set their storage class to volatile (as a best-practice when using interrupt service routine).
+
+To set the storage class of the subsystem states, run the "Embedded Coder" app in Simulink and in the new toolstrip "C Code" click on Code Interface > Individual Element Code Mappings.
+In the Code Mapping Editor, go to Signals/States and set the storage class to "Volatile" for the required states.
+
 ## TODO list
 
 * Implement I2C begin, write, & read
 * Example of implementation of write & read sensors: using library vs. using I2C blocks
-* In External Interrupt variables are not volatile: how to fix?
