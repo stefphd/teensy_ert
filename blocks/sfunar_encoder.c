@@ -161,6 +161,14 @@ static void mdlInitializeSizes(SimStruct *S)
   ssSetNumDWork(S, 1);
   ssSetDWorkWidth(S, 0, 1);
   ssSetDWorkDataType(S, 0, SS_INT32);
+  int32_T pina = (int32_T) mxGetPr(PINA)[0];
+  int32_T pinb = (int32_T) mxGetPr(PINB)[0];
+  // Use volatile qualifier for DWork
+  static char str[256] = { 0 };
+  sprintf(str, "Encoder_%d%d_DWork1", pina, pinb);
+  ssSetDWorkRTWIdentifier(S, 0, str);
+  ssSetDWorkRTWStorageClass(S, 0, SS_RTW_STORAGE_EXPORTED_GLOBAL);
+  ssSetDWorkRTWTypeQualifier(S, 0, "volatile"); //volatile qualifier for interrupt
 
   /*
    * Set the number of input ports.
