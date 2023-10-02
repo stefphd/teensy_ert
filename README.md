@@ -135,7 +135,7 @@ The following blocks are not implemented yet:
 
 ## Teensyduino version
 
-The library currently uses Teensyduino 1.8.5.
+The library currently uses Teensyduino 1.58
 
 The Teensy Core source code and the tool and compiler binaries are provided together with the library, in the folder "./teensy" and "./tools", respectively. However, you could also use your Teensyduino installation by changing the setup script "setup_teensy_target.m" as follow:
 
