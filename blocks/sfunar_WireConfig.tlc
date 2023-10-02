@@ -1,0 +1,142 @@
+%% File : sfunar_%<Port>Config.tlc
+%%
+%% Description: 
+%%   Code generation file for sfunar_serialConfig
+%%
+
+%% Copyright 2013-2014 The MathWorks, Inc.
+
+%implements sfunar_WireConfig "C"
+
+%include "block_common_includes.tlc"
+
+%% Function: BlockTypeSetup ===============================================
+%%
+%function BlockTypeSetup(block, system) void
+
+    %% Ensure required header files are included
+    %<ArduinoCommonBlockTypeSetup(block, system)>
+    %if !SLibCodeGenForSim()
+        %<LibAddToCommonIncludes("Wire.h")>  
+        %assign file = FEVAL("teensy_ert.Prefs.getCorePath")
+        %<SLibAddToStaticSources("%<file>/../libraries/Wire/Wire.cpp")>
+        %<SLibAddToStaticSources("%<file>/../libraries/Wire/WireIMXRT.cpp")>
+        %<SLibAddToStaticSources("%<file>/../libraries/Wire/WireKinetis.cpp")>
+        %<SLibAddToStaticSources("%<file>/../libraries/Wire/utility/twi.c")>
+    %endif
+
+%endfunction
+
+%% ========================================================================
+%% Function: BlockInstanceSetup
+%% Abstract:
+%%      Setup Wire callback function names. Warn if output not connected.
+%% ========================================================================
+
+%function BlockInstanceSetup(block, system) void
+  %assign Master = LibBlockParameterValue(p1,0)
+  %assign Port = SFcnParamSettings.Port
+  %if Master == 2U
+    %% Generate code only in case of Slave more
+    %openfile buffer
+    %% The element is not connected to anything
+    %if LibIsEqual(SFcnSystemOutputCall[0].BlockToCall, "unconnected")
+        %assign wrnTxt = "No code will be generated for callback "\
+                         "since it is not connected to a system."
+        %<LibReportWarning(wrnTxt)>
+    %endif
+    void cb%<Port>(int len);
+    %closefile buffer
+    %<LibCacheFunctionPrototype(buffer)>
+  %endif
+%endfunction
+
+%% Function: Start ========================================================
+%%
+%function Start(block, system) Output
+  %%
+  %assign Master    = LibBlockParameterValue(p1,0) %% Master/Slave
+  %assign Address   = LibBlockParameterValue(p2,0) %% Address
+  %assign Init      = SFcnParamSettings.Init
+  %assign Port      = SFcnParamSettings.Port
+  %%
+  /* %<Type> (%<ParamSettings.FunctionName>): %<Name> */
+  %if Master == 1U
+      %<Port>.begin();
+      %if SIZE(Init, 1) != 0
+           /* Send initialization into slave device */
+           %<Port>.beginTransmission((uint8_t)%<Init[0]>);
+           %foreach i=SIZE(Init, 1) - 1
+              %<Port>.write((uint8_t)%<Init[i+1]>);
+           %endforeach 
+           %<Port>.endTransmission();
+      %endif
+  %else
+      %<Port>.begin((uint8_t)%<Address>);
+      %if !LibIsEqual(SFcnSystemOutputCall[0].BlockToCall, "unconnected")
+        /* Register callback function */
+        %<Port>.onReceive(&cb%<Port>);
+      %endif
+  %endif
+  %%
+%endfunction
+
+%% ========================================================================
+%% Function: Outputs 
+%% Abstract:
+%%      Create the ISR function. Lock-out interrupts in the ISR's critical code
+%%      section if the ISR is configured as non-preemptive. Save the context in
+%%      ISR's critical code section (unless the ISR represents the Task block).
+%% ========================================================================
+
+%function Outputs(block, system) Output
+
+  %assign Master    = LibBlockParameterValue(p1,0) %% Master/Slave
+  %if Master == 1U
+    %return
+  %endif
+  %assign Port      = SFcnParamSettings.Port
+
+    %if LibIsEqual(SFcnSystemOutputCall[0].BlockToCall, "unconnected")
+        %return
+    %endif
+
+    %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %% Get the downstream block
+    %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %assign ssBlock = LibGetFcnCallBlock(block,0)
+
+    %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %% Call the downstream f-c subsystem, it can inline
+    %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %openfile tmpBuf
+        %<LibBlockExecuteFcnCall(block, 0)>\
+    %closefile tmpBuf
+
+    %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %% Always create the ISR function
+    %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %openfile funcbuf
+    /* Callback for %<Port> in slave mode. Block: '%<Name>' */
+    void cb%<Port>(int size)
+    {
+    %if WHITE_SPACE(tmpBuf)
+        /* Nothing to do for system: %<ssBlock.Name> */
+    %else
+        /* Call the system: %<ssBlock.Name> */
+        %<tmpBuf>\
+    %endif
+    }
+    %closefile funcbuf
+
+    %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %assign srcFile = LibGetModelDotCFile()
+    %<LibSetSourceFileSection(srcFile, "Functions", funcbuf)>
+
+%endfunction
+
+%% [EOF]

@@ -1,0 +1,47 @@
+%% File : sfunar_WireWrite.tlc
+%%
+%% Description: 
+%%   Code generation file for sfunar_WireWrite
+%% Copyright 2013-2014 The MathWorks, Inc.
+
+%implements sfunar_WireWrite "C"
+
+%include "block_common_includes.tlc"
+
+%% Function: BlockTypeSetup ===============================================
+%function BlockTypeSetup(block, system) void
+    %% Ensure required header files are included
+    %<ArduinoCommonBlockTypeSetup(block, system)>
+%endfunction
+
+%% Function: BlockInstanceSetup ===========================================
+%%
+%function BlockInstanceSetup(block, system) void
+  %%
+  %% Function accepts expression as parameter
+  %<LibBlockSetIsExpressionCompliant(block)>
+  %%
+%endfunction
+
+%% Function: Outputs ======================================================
+%%
+%function Outputs(block, system) Output
+
+  %if !SLibCodeGenForSim()
+    %assign u1_dim1_val = LibBlockInputSignalWidth(0)
+    %assign p1_val = LibBlockParameter(p1, "", "", 0)
+    %assign Port = SFcnParamSettings.Port
+    %<Port>.beginTransmission(%<p1_val>);
+    %if u1_dim1_val == 1
+        %assign u1 = LibBlockInputSignal(0, "", "", 0)
+        %<Port>.write(%<u1>);
+    %else
+        %assign u1_ptr = LibBlockInputSignalAddr(0, "", "", 0)
+        %<Port>.write(%<u1_ptr>, (uint16_T)%<u1_dim1_val>);
+    %endif
+    %<Port>.endTransmission();
+  %endif
+
+%endfunction
+
+%% [EOF]

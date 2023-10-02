@@ -1,0 +1,78 @@
+%% File : sfunar_WireRead.tlc
+%%
+%% Description: 
+%%   Code generation file for sfunar_%<Port>Read
+%%
+%% Copyright 2013-2014 The MathWorks, Inc.
+%%
+
+%implements sfunar_WireRead "C"
+
+%include "block_common_includes.tlc"
+
+%% Function: BlockTypeSetup ===============================================
+%function BlockTypeSetup(block, system) void
+  %if ::GenCPP == 0
+    %assign errTxt = "This block requires to use C++."
+    %<LibBlockReportError(block,errTxt)>         
+  %else
+    %% Ensure required header files are included
+    %<ArduinoCommonBlockTypeSetup(block, system)>
+  %endif
+%endfunction
+
+
+%% Function: Outputs ======================================================
+%%
+%function Outputs(block, system) Output
+
+  %if !SLibCodeGenForSim()
+    %assign Address = LibBlockParameter(p1, "", "", 0)     
+    %assign Master  = SFcnParamSettings.Master
+    %assign Size    = SFcnParamSettings.Size
+    %assign Command = SFcnParamSettings.Command
+    %assign Status  = LibBlockOutputSignal(1, "", "", 0)
+    %assign Port = SFcnParamSettings.Port
+
+    %if Master == 1             %% Master only
+        %if SIZE(Command, 1) != 0
+        /* Send command to slave */
+        %<Port>.beginTransmission(%<Address>);
+        %foreach i=SIZE(Command, 1)
+            %<Port>.write((uint8_t)%<Command[i]>);
+        %endforeach 
+        %<Port>.endTransmission();
+        %endif
+
+        %<Port>.requestFrom(%<Address>, (uint8_t)%<Size>);    /* request %<Size> bytes from slave device %<Address> */
+    %endif
+
+    %if Size == 1
+        %assign y1 = LibBlockOutputSignal(0, "", "", 0)
+        if(%<Port>.available() != 0){
+             %<y1> = %<Port>.read();
+             %<Status> = 0;
+        }
+        else{
+            %<Status> = 1;
+        }
+    %else
+    {
+        %assign y1_ptr = LibBlockOutputSignalAddr(0, "", "", 0)
+        uint8_T i;
+        for(i = 0U; i < %<Size>; i++){
+            if(%<Port>.available() != 0){
+             (%<y1_ptr>)[i] = %<Port>.read();
+            }
+            else{
+                break;  /* Requested data not available */
+            }
+        }
+        %<Status> = %<Size> - i;    /* Write what is missing */
+    }
+    %endif
+  %endif
+
+%endfunction
+
+%% [EOF]
