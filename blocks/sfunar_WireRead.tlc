@@ -12,13 +12,10 @@
 
 %% Function: BlockTypeSetup ===============================================
 %function BlockTypeSetup(block, system) void
-  %if ::GenCPP == 0
-    %assign errTxt = "This block requires to use C++."
-    %<LibBlockReportError(block,errTxt)>         
-  %else
+
     %% Ensure required header files are included
     %<ArduinoCommonBlockTypeSetup(block, system)>
-  %endif
+    
 %endfunction
 
 
