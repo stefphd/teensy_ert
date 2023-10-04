@@ -28,17 +28,13 @@
 %function Outputs(block, system) Output
 
   %if !SLibCodeGenForSim()
-    %assign u1_dim1_val = LibBlockInputSignalWidth(0)
+    %assign u1_dim = LibBlockInputSignalWidth(0)
+    %assign utname = LibBlockInputSignalDataTypeName(0,"")
+    %assign u1_ptr = LibBlockInputSignalAddr(0, "", "", 0)
     %assign p1_val = LibBlockParameter(p1, "", "", 0)
     %assign Port = SFcnParamSettings.Port
     %<Port>.beginTransmission(%<p1_val>);
-    %if u1_dim1_val == 1
-        %assign u1 = LibBlockInputSignal(0, "", "", 0)
-        %<Port>.write(%<u1>);
-    %else
-        %assign u1_ptr = LibBlockInputSignalAddr(0, "", "", 0)
-        %<Port>.write(%<u1_ptr>, (uint16_T)%<u1_dim1_val>);
-    %endif
+    %<Port>.write((char*) %<u1_ptr>, (size_t) (%<u1_dim> * sizeof(%<utname>)) );
     %<Port>.endTransmission();
   %endif
 
