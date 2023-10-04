@@ -53,7 +53,7 @@
         uint8_T i;
         for(i = 0U; i < %<y1_dim>; i++){
             if(%<Serial>.available() != 0){
-             (%<y1_ptr>)[i] = %<Port>.read();
+             (%<y1_ptr>)[i] = %<Serial>.read();
             }
             else{
                 break;  /* Requested data not available */
