@@ -173,7 +173,7 @@ static void mdlInitializeSizes(SimStruct *S)
   /*
    * Configure the output port 2
    */
-  ssSetOutputPortDataType(S, 1, SS_BOOLEAN);
+  ssSetOutputPortDataType(S, 1, SS_INT16);
   ssSetOutputPortWidth(S, 1, 1);
   ssSetOutputPortComplexSignal(S, 1, COMPLEX_NO);
   ssSetOutputPortOptimOpts(S, 1, SS_REUSABLE_AND_LOCAL);
