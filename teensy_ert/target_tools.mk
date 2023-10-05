@@ -3,7 +3,7 @@ include $(START_DIR)/slprj/teensy_prefs.mk
 
 LOCAL_GCC_TOOLS_PATH = $(TOOL_ROOT)/arm/bin
 
-LOCAL_OPT       = -g -O2 -Wall -ffunction-sections -fdata-sections $(DIALOG_OPTIONS)
+LOCAL_OPT       = -g -O2 -Wall -ffunction-sections $(DIALOG_OPTIONS)
 
 OPTIONS = -DF_CPU=$(F_CPU) -DLAYOUT_US_ENGLISH -DUSING_MAKEFILE
 OPTIONS += -D__$(MCU)__ -DARDUINO=10813 -DTEENSYDUINO=159 -D$(MCU_DEF)
@@ -17,8 +17,9 @@ endif
 
 LOCAL_CDEFS     = $(OPTIONS) -D__true_false_are_keywords -Dtrue=0x1 -Dfalse=0x0 -DEXIT_FAILURE=1
 LOCAL_CXXDEFS   = $(OPTIONS) -D__true_false_are_keywords -Dtrue=0x1 -Dfalse=0x0
-LOCAL_CSTANDARD = -std=gnu++17
-LOCAL_CWARN     = -Wall -fno-exceptions -Wno-error=narrowing
+LOCAL_CSTANDARD = -std=gnu++14
+LOCAL_CWARN     = 
+LOCAL_CPPWARN   = -Wall -Wno-error=narrowing -fno-exceptions -fno-threadsafe-statics -felide-constructors -fpermissive -fno-rtti
 LOCAL_MCU_OPT   = -mcpu=$(CPUARCH) $(CPUFLAGS)
 CDEBUG          = 
 
@@ -32,13 +33,12 @@ CCOUTPUTFLAG        = -o
 OBJ_EXT             = .o
 
 CXX                 = $(LOCAL_GCC_TOOLS_PATH)/arm-none-eabi-g++
-CXXFLAGS            = $(LOCAL_MCU_OPT) -MMD -I. $(LOCAL_CXXDEFS) $(LOCAL_OPT) $(LOCAL_CSTANDARD)
+CXXFLAGS            = $(LOCAL_MCU_OPT) -MMD -I. $(LOCAL_CXXDEFS) $(LOCAL_OPT) $(LOCAL_CSTANDARD) $(LOCAL_CPPWARN)
 
 # Linker command and options
 LD                  = $(LOCAL_GCC_TOOLS_PATH)/arm-none-eabi-gcc
 LDFLAGS             = $(LOCAL_MCU_OPT) $(LOCAL_CDEFS) $(LOCAL_OPT) $(LOCAL_CWARN) $(LOCAL_CSTANDARD) \
-                      -Os -Wl,--gc-sections,--relax,-Map,mapFile.map,--cref,--defsym=__rtc_localtime=0 -T$(CORE_ROOT)/$(CORE)/$(MCU_LD) \
-                      -felide-constructors -fpermissive -fno-rtti
+                      -Os -Wl,--gc-sections,--relax,-Map,mapFile.map,--cref,--defsym=__rtc_localtime=0 -T$(CORE_ROOT)/$(CORE)/$(MCU_LD)
 LDFLAGS            += $(CPULDFLAGS)
 
 # Specify extension from linker
