@@ -20,9 +20,9 @@
 #include "simstruc.h"
 #define EDIT_OK(S, P_IDX) \
  (!((ssGetSimMode(S)==SS_SIMMODE_SIZES_CALL_ONLY) && mxIsEmpty(ssGetSFcnParam(S, P_IDX))))
-#define SAMPLE_TIME                    (ssGetSFcnParam(S, 2))
-#define OUTPUT_SIZE                    ( *(uint32_T * ) mxGetPr((ssGetSFcnParam(S, 1))))
-
+#define SAMPLE_TIME                    (ssGetSFcnParam(S, 3))
+#define SIZE                           (ssGetSFcnParam(S, 1))
+#define DATATYPE                       (ssGetSFcnParam(S, 2))
 /*
  * Utility function prototypes.
  */
@@ -52,7 +52,7 @@ static void mdlCheckParameters(SimStruct *S)
   }
 
   /*
-   * Check the parameter 1
+   * Check the parameter 2
    */
   if EDIT_OK(S, 1) {
     int_T dimsArray[2] = { 1, 1 };
@@ -62,9 +62,19 @@ static void mdlCheckParameters(SimStruct *S)
   }
 
   /*
-   * Check the parameter 2 (sample time)
+   * Check the parameter 3
    */
   if EDIT_OK(S, 2) {
+    int_T dimsArray[2] = { 1, 1 };
+
+    /* Check the parameter attributes */
+    ssCheckSFcnParamValueAttribs(S, 2, "P3", DYNAMICALLY_TYPED, 2, dimsArray, 0);
+  }
+
+  /*
+   * Check the parameter 4 (sample time)
+   */
+  if EDIT_OK(S, 3) {
     const double *sampleTime = NULL;
     const size_t stArraySize = mxGetM(SAMPLE_TIME) * mxGetN(SAMPLE_TIME);
 
@@ -116,7 +126,7 @@ static void mdlCheckParameters(SimStruct *S)
 static void mdlInitializeSizes(SimStruct *S)
 {
   /* Number of expected parameters */
-  ssSetNumSFcnParams(S, 3);
+  ssSetNumSFcnParams(S, 4);
 
 #if defined(MATLAB_MEX_FILE)
 
@@ -142,6 +152,7 @@ static void mdlInitializeSizes(SimStruct *S)
   ssSetSFcnParamTunable(S, 0, SS_PRM_NOT_TUNABLE);
   ssSetSFcnParamTunable(S, 1, SS_PRM_NOT_TUNABLE);
   ssSetSFcnParamTunable(S, 2, SS_PRM_NOT_TUNABLE);
+  ssSetSFcnParamTunable(S, 3, SS_PRM_NOT_TUNABLE);
 
   ssSetNumPWork(S, 0);
 
@@ -163,8 +174,10 @@ static void mdlInitializeSizes(SimStruct *S)
   /*
    * Configure the output port 1
    */
-  ssSetOutputPortDataType(S, 0, SS_UINT8);
-  ssSetOutputPortWidth(S, 0, OUTPUT_SIZE);
+  int32_T n = (int32_T) mxGetPr(SIZE)[0];
+  int32_T dt = ((int32_T) mxGetPr(DATATYPE)[0]) - 1;
+  ssSetOutputPortDataType(S, 0, dt);
+  ssSetOutputPortWidth(S, 0, n);
   ssSetOutputPortComplexSignal(S, 0, COMPLEX_NO);
   ssSetOutputPortOptimOpts(S, 0, SS_REUSABLE_AND_LOCAL);
   ssSetOutputPortOutputExprInRTW(S, 0, 0);

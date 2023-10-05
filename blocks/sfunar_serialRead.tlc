@@ -32,6 +32,8 @@
     %assign y2_val = LibBlockOutputSignal(1, "", "", 0)
     %assign y1_dim = LibBlockOutputSignalWidth(0)
     %assign p1_val = CAST("Number", LibBlockParameterValue(p1,0)) - 1
+    %assign ytname = LibBlockOutputSignalDataTypeName(0,"")
+    %assign y1_ptr = LibBlockOutputSignalAddr(0, "", "", 0)
     %if p1_val == 0
       %assign Serial = "Serial"
     %else
@@ -39,26 +41,52 @@
     %endif
 
     %if y1_dim == 1
-        %assign y1 = LibBlockOutputSignal(0, "", "", 0)
-        if(%<Serial>.available() != 0){
-             %<y1> = %<Serial>.read();
-             %<y2_val> = 0;
+        %if ISEQUAL(ytname,"uint8_T")
+        %assign y1_val = LibBlockOutputSignal(0, "", "", 0)
+        if(%<Serial>.available() > 0){
+            %<y1_val> = %<Serial>.read();
+            %<y2_val> = 0;
         }
         else{
             %<y2_val> = 1;
         }
+        %else
+        if(%<Serial>.available() >= ((int) sizeof(%<ytname>)) ){
+            /* Read each byte from %<Serial> */
+            for (size_t j = 0; j < sizeof(%<ytname>); j++) {
+                ((uint8_T*) %<y1_ptr>)[j] = %<Serial>.read();
+            }
+            %<y2_val> = 0;
+        }
+        else{
+            %<y2_val> = 1;
+        }
+        %endif
     %else
     {
-        %assign y1_ptr = LibBlockOutputSignalAddr(0, "", "", 0)
-        uint8_T i;
-        for(i = 0U; i < %<y1_dim>; i++){
-            if(%<Serial>.available() != 0){
-             (%<y1_ptr>)[i] = %<Serial>.read();
+        size_t i;
+        %if ISEQUAL(ytname,"uint8_T")
+        for(i = 0U; i < %<y1_dim>; i++) {
+            if(%<Serial>.available() > 0){
+                (%<y1_ptr>)[i] = %<Serial>.read();
             }
             else{
                 break;  /* Requested data not available */
             }
         }
+        %else
+        for(i = 0U; i < %<y1_dim>; i++){
+            if(%<Serial>.available() >= ((int) sizeof(%<ytname>)) ){
+                /* Read each byte from %<Serial> */
+                for (size_t j = 0; j < sizeof(%<ytname>); j++) {
+                    ((uint8_T*) (%<y1_ptr> + i))[j] = %<Serial>.read();
+                }
+            }
+            else{
+                break;  /* Requested data not available */
+            }
+        }
+        %endif
         %<y2_val> = %<y1_dim> - i;    /* Write what is missing */
     }
     %endif
