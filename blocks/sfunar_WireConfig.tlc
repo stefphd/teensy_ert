@@ -19,10 +19,10 @@
     %if !SLibCodeGenForSim()
         %<LibAddToCommonIncludes("Wire.h")>  
         %assign file = FEVAL("teensy_ert.Prefs.getCorePath")
-        %<SLibAddToStaticSources("%<file>/../libraries/Wire/Wire.cpp")>
-        %<SLibAddToStaticSources("%<file>/../libraries/Wire/WireIMXRT.cpp")>
-        %<SLibAddToStaticSources("%<file>/../libraries/Wire/WireKinetis.cpp")>
-        %<SLibAddToStaticSources("%<file>/../libraries/Wire/utility/twi.c")>
+        %% %<SLibAddToStaticSources("%<file>/../libraries/Wire/Wire.cpp")> NOT USED FOR TEENSY
+        %<SLibAddToStaticSources("%<file>/../libraries/Wire/WireIMXRT.cpp")> %% FOR TEENSY 4.X
+        %<SLibAddToStaticSources("%<file>/../libraries/Wire/WireKinetis.cpp")> %% FOR TEENSY 3.X
+        %% %<SLibAddToStaticSources("%<file>/../libraries/Wire/utility/twi.c")> NOT USED FOR TEENSY
     %endif
 
 %endfunction
