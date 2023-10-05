@@ -19,3 +19,6 @@ demos/slprj
 demos/*.slxc
 demos/*slx.original
 demos/*.slx.autosave
+
+# Library examples
+teensy/**/examples
