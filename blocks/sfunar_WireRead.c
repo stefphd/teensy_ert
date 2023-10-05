@@ -74,17 +74,6 @@ static void mdlCheckParameters(SimStruct *S)
     ssCheckSFcnParamValueAttribs(S, 3, "P4", DYNAMICALLY_TYPED, 2, dimsArray, 0);
   }
 
-
-    /*
-   * Check the parameter 5
-   */
-  if EDIT_OK(S, 4) {
-    int_T dimsArray[2] = { 1, 1 };
-
-    /* Check the parameter attributes */
-    ssCheckSFcnParamValueAttribs(S, 4, "P5", DYNAMICALLY_TYPED, 2, dimsArray, 0);
-  }
-
   /*
    * Check the parameter 6
    */
@@ -211,8 +200,8 @@ static void mdlInitializeSizes(SimStruct *S)
    */
 
   n = (int32_T) mxGetPr(SIZE)[0];
-  dt = ((int32_T) mxGetPr(DATATYPE)[0]) - 1;
-  ssSetOutputPortDataType(S, 0, dt);
+  //dt = ((int32_T) mxGetPr(DATATYPE)[0]) - 1;
+  ssSetOutputPortDataType(S, 0, ssGetDataTypeId(S, mxArrayToString(DATATYPE)));
   ssSetOutputPortWidth(S, 0, n);
   ssSetOutputPortComplexSignal(S, 0, COMPLEX_NO);
   ssSetOutputPortOptimOpts(S, 0, SS_REUSABLE_AND_LOCAL);
