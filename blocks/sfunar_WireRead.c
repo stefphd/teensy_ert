@@ -22,8 +22,9 @@
 #define MASTER          (ssGetSFcnParam(S, 1))
 #define ADDRESS         (ssGetSFcnParam(S, 2))
 #define SIZE            (ssGetSFcnParam(S, 3))
-#define COMMAND         (ssGetSFcnParam(S, 4))
-#define SAMPLE_TIME     (ssGetSFcnParam(S, 5))
+#define DATATYPE        (ssGetSFcnParam(S, 4))
+#define COMMAND         (ssGetSFcnParam(S, 5))
+#define SAMPLE_TIME     (ssGetSFcnParam(S, 6))
 
 /*
  * Utility function prototypes.
@@ -73,27 +74,38 @@ static void mdlCheckParameters(SimStruct *S)
     ssCheckSFcnParamValueAttribs(S, 3, "P4", DYNAMICALLY_TYPED, 2, dimsArray, 0);
   }
 
-  /*
+
+    /*
    * Check the parameter 5
    */
   if EDIT_OK(S, 4) {
+    int_T dimsArray[2] = { 1, 1 };
+
+    /* Check the parameter attributes */
+    ssCheckSFcnParamValueAttribs(S, 4, "P5", DYNAMICALLY_TYPED, 2, dimsArray, 0);
+  }
+
+  /*
+   * Check the parameter 6
+   */
+  if EDIT_OK(S, 5) {
     int_T *dimsArray = (int_T *) mxGetDimensions(COMMAND);
 
      if(dimsArray[0] != 0){
          /* Parameter 5 must be a vector */
          if ((dimsArray[0] > 1) && (dimsArray[1] > 1)) {
-          ssSetErrorStatus(S,"Parameter 5 must be a vector");
+          ssSetErrorStatus(S,"Parameter 6 must be a vector");
           return;
          }
     /* Check the parameter attributes */
-    ssCheckSFcnParamValueAttribs(S, 4, "P5", DYNAMICALLY_TYPED, 2, dimsArray, 0);
+    ssCheckSFcnParamValueAttribs(S, 5, "P6", DYNAMICALLY_TYPED, 2, dimsArray, 0);
      }
   }
 
   /*
-   * Check the parameter 6 (sample time)
+   * Check the parameter 7 (sample time)
    */
-  if EDIT_OK(S, 5) {
+  if EDIT_OK(S, 6) {
     const double *sampleTime = NULL;
     const size_t stArraySize = mxGetM(SAMPLE_TIME) * mxGetN(SAMPLE_TIME);
 
@@ -144,10 +156,10 @@ static void mdlCheckParameters(SimStruct *S)
  */
 static void mdlInitializeSizes(SimStruct *S)
 {
-  int32_T n;
+  int32_T n, dt;
 
   /* Number of expected parameters */
-  ssSetNumSFcnParams(S, 6);
+  ssSetNumSFcnParams(S, 7);
 
 #if defined(MATLAB_MEX_FILE)
 
@@ -175,6 +187,7 @@ static void mdlInitializeSizes(SimStruct *S)
   ssSetSFcnParamTunable(S, 3, SS_PRM_NOT_TUNABLE);
   ssSetSFcnParamTunable(S, 4, SS_PRM_NOT_TUNABLE);
   ssSetSFcnParamTunable(S, 5, SS_PRM_NOT_TUNABLE);
+  ssSetSFcnParamTunable(S, 6, SS_PRM_NOT_TUNABLE);
 
   ssSetNumPWork(S, 0);
 
@@ -198,7 +211,8 @@ static void mdlInitializeSizes(SimStruct *S)
    */
 
   n = (int32_T) mxGetPr(SIZE)[0];
-  ssSetOutputPortDataType(S, 0, SS_UINT8);
+  dt = ((int32_T) mxGetPr(DATATYPE)[0]) - 1;
+  ssSetOutputPortDataType(S, 0, dt);
   ssSetOutputPortWidth(S, 0, n);
   ssSetOutputPortComplexSignal(S, 0, COMPLEX_NO);
   ssSetOutputPortOptimOpts(S, 0, SS_REUSABLE_AND_LOCAL);
