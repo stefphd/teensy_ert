@@ -56,7 +56,7 @@
     %else
     {
         %assign y1_ptr = LibBlockOutputSignalAddr(0, "", "", 0)
-        uint8_T i;
+        size_t i;
         for(i = 0U; i < %<Size>; i++){
             if(%<Port>.available() != 0){
              (%<y1_ptr>)[i] = %<Port>.read();
