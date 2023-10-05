@@ -29,13 +29,8 @@
     %assign u1_dim = LibBlockInputSignalWidth(0)
     %assign utname = LibBlockInputSignalDataTypeName(0,"")
     %assign u1_ptr = LibBlockInputSignalAddr(0, "", "", 0)
-    %assign p1_val = CAST("Number", LibBlockParameterValue(p1,0)) - 1
-    %if p1_val == 0
-      %assign Serial = "Serial"
-    %else
-      %assign Serial = "Serial%<p1_val>" 
-    %endif
-    %<Serial>.write( (char*) %<u1_ptr>, (size_t) (%<u1_dim> * sizeof(%<utname>)) );
+    %assign Port = SFcnParamSettings.Port
+    %<Port>.write( (char*) %<u1_ptr>, (size_t) (%<u1_dim> * sizeof(%<utname>)) );
   %endif
 
 %endfunction

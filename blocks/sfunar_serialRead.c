@@ -23,6 +23,8 @@
 #define SAMPLE_TIME                    (ssGetSFcnParam(S, 3))
 #define SIZE                           (ssGetSFcnParam(S, 1))
 #define DATATYPE                       (ssGetSFcnParam(S, 2))
+#define SERIAL                         (ssGetSFcnParam(S, 0))
+
 /*
  * Utility function prototypes.
  */
@@ -40,16 +42,6 @@ static bool IsRealMatrix(const mxArray * const m);
  */
 static void mdlCheckParameters(SimStruct *S)
 {
-
-  /*
-   * Check the parameter 1
-   */
-  if EDIT_OK(S, 0) {
-    int_T dimsArray[2] = { 1, 1 };
-
-    /* Check the parameter attributes */
-    ssCheckSFcnParamValueAttribs(S, 0, "P1", DYNAMICALLY_TYPED, 2, dimsArray, 0);
-  }
 
   /*
    * Check the parameter 2
@@ -250,13 +242,9 @@ static void mdlInitializeSampleTimes(SimStruct *S)
 static void mdlSetWorkWidths(SimStruct *S)
 {
   /* Set number of run-time parameters */
-  if (!ssSetNumRunTimeParams(S, 1))
+  if (!ssSetNumRunTimeParams(S, 0))
     return;
 
-  /*
-   * Register the run-time parameter 1
-   */
-  ssRegDlgParamAsRunTimeParam(S, 0, 0, "p1", ssGetDataTypeId(S, "uint8"));
 }
 
 #endif
@@ -309,7 +297,12 @@ static void mdlTerminate(SimStruct *S)
  */
 static void mdlRTW(SimStruct *S)
 {
-    UNUSED_PARAMETER(S);
+    if (!ssWriteRTWParamSettings(S, 1,
+                    SSWRITE_VALUE_STR,          "Port",   mxArrayToString(SERIAL)))
+    {
+            ssSetErrorStatus(S,"ssWriteRTWParamSettings error in mdlRTW"); 
+            return;
+    }
 }
 
 #endif

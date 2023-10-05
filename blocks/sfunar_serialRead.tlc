@@ -31,30 +31,25 @@
   %if !SLibCodeGenForSim()
     %assign y2_val = LibBlockOutputSignal(1, "", "", 0)
     %assign y1_dim = LibBlockOutputSignalWidth(0)
-    %assign p1_val = CAST("Number", LibBlockParameterValue(p1,0)) - 1
     %assign ytname = LibBlockOutputSignalDataTypeName(0,"")
     %assign y1_ptr = LibBlockOutputSignalAddr(0, "", "", 0)
-    %if p1_val == 0
-      %assign Serial = "Serial"
-    %else
-      %assign Serial = "Serial%<p1_val>" 
-    %endif
+    %assign Port = SFcnParamSettings.Port
 
     %if y1_dim == 1
         %if ISEQUAL(ytname,"uint8_T")
         %assign y1_val = LibBlockOutputSignal(0, "", "", 0)
-        if(%<Serial>.available() > 0){
-            %<y1_val> = %<Serial>.read();
+        if(%<Port>.available() > 0){
+            %<y1_val> = %<Port>.read();
             %<y2_val> = 0;
         }
         else{
             %<y2_val> = 1;
         }
         %else
-        if(%<Serial>.available() >= ((int) sizeof(%<ytname>)) ){
-            /* Read each byte from %<Serial> */
+        if(%<Port>.available() >= ((int) sizeof(%<ytname>)) ){
+            /* Read each byte from %<Port> */
             for (size_t j = 0; j < sizeof(%<ytname>); j++) {
-                ((uint8_T*) %<y1_ptr>)[j] = %<Serial>.read();
+                ((uint8_T*) %<y1_ptr>)[j] = %<Port>.read();
             }
             %<y2_val> = 0;
         }
@@ -67,8 +62,8 @@
         size_t i;
         %if ISEQUAL(ytname,"uint8_T")
         for(i = 0U; i < %<y1_dim>; i++) {
-            if(%<Serial>.available() > 0){
-                (%<y1_ptr>)[i] = %<Serial>.read();
+            if(%<Port>.available() > 0){
+                (%<y1_ptr>)[i] = %<Port>.read();
             }
             else{
                 break;  /* Requested data not available */
@@ -76,10 +71,10 @@
         }
         %else
         for(i = 0U; i < %<y1_dim>; i++){
-            if(%<Serial>.available() >= ((int) sizeof(%<ytname>)) ){
-                /* Read each byte from %<Serial> */
+            if(%<Port>.available() >= ((int) sizeof(%<ytname>)) ){
+                /* Read each byte from %<Port> */
                 for (size_t j = 0; j < sizeof(%<ytname>); j++) {
-                    ((uint8_T*) (%<y1_ptr> + i))[j] = %<Serial>.read();
+                    ((uint8_T*) (%<y1_ptr> + i))[j] = %<Port>.read();
                 }
             }
             else{
@@ -108,7 +103,7 @@
   %switch retType
     %case "Signal"
       %if portIdx == 0
-        %return "%<Serial>.read()"
+        %return "%<Port>.read()"
       %else
         %assign errTxt = "Block output port index not supported: %<portIdx>"
         %<LibBlockReportError(block,errTxt)>

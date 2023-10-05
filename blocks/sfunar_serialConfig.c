@@ -23,6 +23,7 @@
  (!((ssGetSimMode(S)==SS_SIMMODE_SIZES_CALL_ONLY) && mxIsEmpty(ssGetSFcnParam(S, P_IDX))))
 #define MDL_CHECK_PARAMETERS
 #if defined(MDL_CHECK_PARAMETERS) && defined(MATLAB_MEX_FILE)
+#define SERIAL    (ssGetSFcnParam(S, 0))
 
 /* Function: mdlCheckParameters ===========================================
  * Abstract:
@@ -33,15 +34,6 @@
  */
 static void mdlCheckParameters(SimStruct *S)
 {
-  /*
-   * Check the parameter 1
-   */
-  if EDIT_OK(S, 0) {
-    int_T dimsArray[2] = { 1, 1 };
-
-    /* Check the parameter attributes */
-    ssCheckSFcnParamValueAttribs(S, 0, "P1", DYNAMICALLY_TYPED, 2, dimsArray, 0);
-  }
 
   /*
    * Check the parameter 2
@@ -179,27 +171,38 @@ static void mdlInitializeSampleTimes(SimStruct *S)
 static void mdlSetWorkWidths(SimStruct *S)
 {
   /* Set number of run-time parameters */
-  if (!ssSetNumRunTimeParams(S, 3))
+  if (!ssSetNumRunTimeParams(S, 2))
     return;
 
   /*
    * Register the run-time parameter 1
    */
-  ssRegDlgParamAsRunTimeParam(S, 0, 0, "p1", ssGetDataTypeId(S, "uint8"));
+  // ssRegDlgParamAsRunTimeParam(S, 0, 0, "p1", ssGetDataTypeId(S, "uint8"));
 
   /*
    * Register the run-time parameter 2
    */
-  ssRegDlgParamAsRunTimeParam(S, 1, 1, "p2", ssGetDataTypeId(S, "uint32"));
+  ssRegDlgParamAsRunTimeParam(S, 1, 0, "p1", ssGetDataTypeId(S, "uint32"));
 
 
   /*
    * Register the run-time parameter 3
    */
-  ssRegDlgParamAsRunTimeParam(S, 2, 2, "p3", ssGetDataTypeId(S, "uint32"));
+  ssRegDlgParamAsRunTimeParam(S, 2, 1, "p2", ssGetDataTypeId(S, "uint32"));
 }
 
 #endif
+
+#define MDL_RTW
+static void mdlRTW(SimStruct *S)
+{    
+    if (!ssWriteRTWParamSettings(S, 1,
+                    SSWRITE_VALUE_STR,          "Port",   mxArrayToString(SERIAL)))
+    {
+            ssSetErrorStatus(S,"ssWriteRTWParamSettings error in mdlRTW"); 
+            return;
+    }
+}
 
 #define MDL_START
 #if defined(MDL_START)

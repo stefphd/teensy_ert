@@ -21,18 +21,13 @@
 %%
 %function Start(block, system) Output
   %%
-  %assign p1_val = CAST("Number", LibBlockParameterValue(p1,0)) - 1
+  %assign p1_val = LibBlockParameterValue(p1,0)
   %assign p2_val = LibBlockParameterValue(p2,0)
-  %assign p3_val = LibBlockParameterValue(p3,0)
-  %if p1_val == 0
-      %assign Serial = "Serial"
-  %else
-      %assign Serial = "Serial%<p1_val>" 
-  %endif
+  %assign Port = SFcnParamSettings.Port
   %%
-    /* %<Type> (%<ParamSettings.FunctionName>): %<Name> */
-  %<Serial>.begin(%<p2_val>);
-  %<Serial>.setTimeout(%<p3_val>);
+  /* %<Type> (%<ParamSettings.FunctionName>): %<Name> */
+  %<Port>.begin(%<p1_val>);
+  %<Port>.setTimeout(%<p2_val>);
   %%
 %endfunction
 
