@@ -3,7 +3,7 @@ include $(START_DIR)/slprj/teensy_prefs.mk
 
 LOCAL_GCC_TOOLS_PATH = $(TOOL_ROOT)/arm/bin
 
-LOCAL_OPT       = -g -O2 -Wall -ffunction-sections $(DIALOG_OPTIONS)
+LOCAL_OPT       = -g -O2 -Wall -ffunction-sections -fdata-sections $(DIALOG_OPTIONS)
 
 OPTIONS = -DF_CPU=$(F_CPU) -DLAYOUT_US_ENGLISH -DUSING_MAKEFILE
 OPTIONS += -D__$(MCU)__ -DARDUINO=10813 -DTEENSYDUINO=159 -D$(MCU_DEF)
@@ -65,9 +65,9 @@ OBJDUMPFLAGS        = -d -S
 EXE_FILE_EXT = $(BINARY_FILE_EXT)
 
 TEENSY_INC_LIBS    = -I$(CORE_ROOT)/../libraries/Wire \
-                     -I$(CORE_ROOT)/../libraries/Wire/utility \
                      -I$(CORE_ROOT)/../libraries/SPI \
-                     -I$(CORE_ROOT)/../libraries/TeensyTimerTool/src
+                     -I$(CORE_ROOT)/../libraries/SD/src \
+                     -I$(CORE_ROOT)/../libraries/SdFat/src
 
 TARGET_INC_DIR       = -I$(CORE_ROOT)/$(CORE)
 
