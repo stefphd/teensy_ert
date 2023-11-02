@@ -65,6 +65,8 @@
     volatile boolean OverrunFlag = 0;
     void rt_OneStep(void)
     {   
+        /* Disable interrupts */
+        cli();
 		/* First check  OverrunFlag, then increment! */
 		if (OverrunFlag) {
 			if(uOverrunCounter < 255U) uOverrunCounter++;
@@ -72,6 +74,9 @@
 			return;
 		}
 		OverrunFlag = 1;
+        
+        /* Re-enable interrupts */
+        sei();
 		
         /* Call model step */
         %<LibCallModelStep(0)>
