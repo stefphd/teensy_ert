@@ -1,0 +1,210 @@
+%% File : sfunar_fileWrite.tlc
+%%
+%% Description: 
+%%   Code generation file for sfunar_serialWrite
+
+%implements sfunar_fileWrite "C"
+
+%include "block_common_includes.tlc"
+
+%% Function: BlockTypeSetup ===============================================
+%function BlockTypeSetup(block, system) void
+  
+    %% Ensure required header files are included
+    %<ArduinoCommonBlockTypeSetup(block, system)>
+    %<LibAddToCommonIncludes("SD.h")>
+    %<LibAddToCommonIncludes("RingBuf.h")>
+    %assign file = FEVAL("teensy_ert.Prefs.getCorePath") 
+	%<SLibAddToStaticSources("%<file>/../libraries/SPI/SPI.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SD/src/SD.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/FreeStack.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/MinimumSerial.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/ExFatLib/ExFatDbg.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/ExFatLib/ExFatFile.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/ExFatLib/ExFatFilePrint.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/ExFatLib/ExFatFileWrite.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/ExFatLib/ExFatFormatter.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/ExFatLib/ExFatName.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/ExFatLib/ExFatPartition.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/ExFatLib/ExFatVolume.cpp")>
+	%% %<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/ExFatLib/upcase.cpp")> no longer required
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/FatLib/FatDbg.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/FatLib/FatFile.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/FatLib/FatFileLFN.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/FatLib/FatFilePrint.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/FatLib/FatFileSFN.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/FatLib/FatFormatter.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/FatLib/FatName.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/FatLib/FatPartition.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/FatLib/FatVolume.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/FsLib/FsFile.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/FsLib/FsNew.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/FsLib/FsVolume.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/SdCard/SdCardInfo.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/SdCard/SdSpiCard.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/SdCard/SdioTeensy.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/SpiDriver/SdSpiArtemis.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/SpiDriver/SdSpiChipSelect.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/SpiDriver/SdSpiDue.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/SpiDriver/SdSpiESP.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/SpiDriver/SdSpiParticle.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/SpiDriver/SdSpiSTM32.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/SpiDriver/SdSpiSTM32Core.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/SpiDriver/SdSpiTeensy3.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/common/FmtNumber.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/common/FsCache.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/common/FsDateTime.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/common/FsName.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/common/FsStructs.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/common/FsUtf.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/common/PrintBasic.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/common/upcase.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/iostream/StdioStream.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/iostream/StreamBaseClass.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/iostream/istream.cpp")>
+	%<SLibAddToStaticSources("%<file>/../libraries/SdFat/src/iostream/ostream.cpp")>
+%endfunction
+
+%function BlockInstanceSetup(block, system) void
+  %%
+  %% %<LibBlockSetIsExpressionCompliant(block)>
+  %%
+%endfunction
+
+%% Function: Start ========================================================
+%%
+%function Start(block, system) Output
+  %%
+  %assign Prealloc = SFcnParamSettings.Prealloc
+  %assign Filename = SFcnParamSettings.Filename
+  %assign samples = LibBlockDWork(DWork[0], "", "", 0)
+  %assign status = LibBlockDWork(DWork[1], "", "", 0)
+  %assign fileptr = LibBlockPWork(PWork[0], "","",0)
+  %assign bufptr = LibBlockPWork(PWork[1], "","",0)
+  %assign u1_dim = LibBlockInputSignalWidth(0)
+  %assign utname = LibBlockInputSignalDataTypeName(0,"")
+  %assign varsuffix = LibGetRecordIdentifier(block)
+  %assign sd = "SD.sdfs"
+  %assign sd_config = "SdioConfig(FIFO_SDIO)"
+  %assign openopts = "O_RDWR | O_CREAT | O_TRUNC"
+  %%dwork 0: samples
+  %%dwork 1: status
+  %%pwork 0: file ptr
+  %%pwork 1: ringbuf ptr
+  %%
+  /* %<Type> (%<ParamSettings.FunctionName>): %<Name> */
+  %<samples> = 0; /* Init samples to 0 */
+  %<status> = 1; /* Init status to 1 */
+  
+  /* Init poiter to null */
+  %<fileptr> = nullptr;
+  %<bufptr> = nullptr;
+  
+  /* Start SD card */
+  if (!%<sd>.begin(%<sd_config>)) %<status> = 0;
+  
+  /* Open new file %<Filename> */
+  if (%<status>) {
+      file_%<varsuffix> = %<sd>.open("%<Filename>", %<openopts>);
+      if (!file_%<varsuffix>.isOpen()) %<status> = 0;
+  }
+  if (%<status>) {
+      /* Get pointers */
+      %<fileptr> = (void*) &file_%<varsuffix>; /* Pointer to the file */
+      %<bufptr> = (void*) &ringbuf_%<varsuffix>; /* Pointer to the ring buffer */
+      
+      /* Allocate and begin ring buffer */
+      file_%<varsuffix>.preAllocate(%<Prealloc> * 1024U * 1024U);
+      ringbuf_%<varsuffix>.begin((FsFile*) %<fileptr>);  
+  }
+
+  %%
+%endfunction
+
+%% Function: Terminate ====================================================
+%%
+%function Terminate(block, system) Output
+  %assign varsuffix = LibGetRecordIdentifier(block)
+  %assign samples = LibBlockDWork(DWork[0], "", "", 0)
+  %assign status = LibBlockDWork(DWork[1], "", "", 0)
+  %assign u1_dim = LibBlockInputSignalWidth(0)
+  %assign utname = LibBlockInputSignalDataTypeName(0,"")
+  
+  %if !SLibCodeGenForSim()
+  if (%<status>) { /* Check for File status */
+      ringbuf_%<varsuffix>.writeOut(ringbuf_%<varsuffix>.bytesUsed()); /* Write all bytes in ring buffer to the file */
+      file_%<varsuffix>.flush(); /* Flush the file */
+      file_%<varsuffix>.truncate((size_t) ( (%<u1_dim> * sizeof(%<utname>)) * %<samples>) ); /* Truncate file to the actual size */
+      file_%<varsuffix>.close(); /* Close the file */
+      %<status> = 0; /* File no longer available for writing */
+  }
+  %endif
+
+%endfunction
+
+%% Function: Outputs ======================================================
+%%
+%function Outputs(block, system) Output
+  %assign varsuffix = LibGetRecordIdentifier(block)
+  %assign u1_dim = LibBlockInputSignalWidth(0)
+  %assign utname = LibBlockInputSignalDataTypeName(0,"")
+  %assign RingbufSize = SFcnParamSettings.RingbufSize
+  %assign Prealloc = SFcnParamSettings.Prealloc
+  %assign SDSectorSize = 512
+  %assign samples = LibBlockDWork(DWork[0], "", "", 0)
+  %assign status = LibBlockDWork(DWork[1], "", "", 0)
+  %assign fileptr = LibBlockPWork(PWork[0], "","",0)
+  %assign bufptr = LibBlockPWork(PWork[1], "","",0)
+  %assign u1_ptr = LibBlockInputSignalAddr(0, "", "", 0)
+  %assign u1_dim = LibBlockInputSignalWidth(0)
+  %assign utname = LibBlockInputSignalDataTypeName(0,"")
+  %assign y1_val = LibBlockOutputSignal(0, "", "", 0)
+  %assign y2_val = LibBlockOutputSignal(1, "", "", 0)
+
+  %if !SLibCodeGenForSim()
+      if (%<status>) { /* Check for File status */
+        /* Write data to the buffer and increment the sample counter */
+        ringbuf_%<varsuffix>.write((char*) %<u1_ptr>, (size_t) (%<u1_dim> * sizeof(%<utname>)));
+        %<samples>++; 
+        
+        /* Check if space left on the file is enough */
+        size_t ringbuf_%<varsuffix>_bytesused = ringbuf_%<varsuffix>.bytesUsed();
+        if ( (ringbuf_%<varsuffix>_bytesused + file_%<varsuffix>.curPosition()) > (%<Prealloc> - (%<u1_dim> * sizeof(%<utname>))) ) {    
+            %<samples>--; /* Decrement the sample counter */
+            file_%<varsuffix>.flush(); /* Flush the file */
+            file_%<varsuffix>.truncate((size_t) ( (%<u1_dim> * sizeof(%<utname>)) * %<samples>) ); /* Truncate file to the actual size */
+            file_%<varsuffix>.close(); /* Close the file */ 
+            %<status> = 0;
+        }
+        
+        /* Write %<SDSectorSize> bytes to the file, if free for writing */
+        if ( (%<status>) && (ringbuf_%<varsuffix>_bytesused >= %<SDSectorSize>) && !file_%<varsuffix>.isBusy() ) {
+             if (%<SDSectorSize> != ringbuf_%<varsuffix>.writeOut(%<SDSectorSize>)) { /* Unable to write */
+                %<samples>--; /* Decrement the sample counter */
+                file_%<varsuffix>.flush(); /* Flush the file */
+                file_%<varsuffix>.truncate((size_t) ( (%<u1_dim> * sizeof(%<utname>)) * %<samples>) ); /* Truncate file to the actual size */
+                file_%<varsuffix>.close(); /* Close the file */
+                %<status> = 0;
+            }
+        }
+      }
+      /* Set File Write Outputs */
+      %<y1_val> = %<samples>;
+      %<y2_val> = %<status>;
+  %endif
+
+  %% Create File and RingBuf objects
+  %openfile objbuf
+
+  /* Global File and RingBuf Objects for block %<Name> */
+  FsFile file_%<varsuffix>;
+  RingBuf<FsFile, (%<RingbufSize> * %<u1_dim> * sizeof(%<utname>))> ringbuf_%<varsuffix>;
+  
+  %closefile objbuf
+
+  %assign srcFile = LibGetModelDotCFile()
+  %<LibSetSourceFileSection(srcFile, "Declarations", objbuf)>
+
+%endfunction
+
+%% [EOF]
