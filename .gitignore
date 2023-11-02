@@ -21,4 +21,12 @@ demos/*slx.original
 demos/*.slx.autosave
 
 # Library examples
-teensy/**/examples
+teensy/**/libraries/**/examples
+teensy/**/libraries/**/extras
+teensy/**/libraries/**/doc
+
+# Tmp files
+*tmp.txt
+
+# ASV files
+*.asv
