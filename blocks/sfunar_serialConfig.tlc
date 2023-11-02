@@ -25,7 +25,6 @@
   %assign p2_val = LibBlockParameterValue(p2,0)
   %assign Port = SFcnParamSettings.Port
   %%
-  /* %<Type> (%<ParamSettings.FunctionName>): %<Name> */
   %<Port>.begin(%<p1_val>);
   %<Port>.setTimeout(%<p2_val>);
   %%
