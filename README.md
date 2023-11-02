@@ -81,10 +81,10 @@ In Modeling > Model Settings > Code Generation > Teensy Options you can select o
 Possible Teensy boards are:
 
 * Teensy 4.1
-* Teensy 4.0 (Not tested)
-* Teensy 3.6 (Not tested)
-* Teensy 3.5 (Not tested)
-* Teensy 3.2 (Not tested)
+* Teensy 4.0 (NOT tested)
+* Teensy 3.6 (NOT tested)
+* Teensy 3.5 (NOT tested)
+* Teensy 3.2 (NOT tested)
 
 ### Timer Source
 
@@ -127,11 +127,11 @@ Implemented Simulink Blocks include:
 * Overrun counter
 * Encoder read
 * I2C config, transmit & receive (NOT tested yet)
+* SD File Write (binary) (NOT tested yet)
 
 The following blocks are not implemented yet:
 
 * SPI begin, read & write
-* SD file open, write & close
 
 ## Teensyduino version
 
@@ -156,5 +156,4 @@ In the Code Mapping Editor, go to Signals/States and set the storage class to "V
 
 ## TODO list
 
-* Implement I2C begin, write, & read
 * Example of implementation of write & read sensors: using library vs. using I2C blocks
