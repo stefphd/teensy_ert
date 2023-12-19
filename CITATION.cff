@@ -1,9 +1,20 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+title: Simulink Embedded Coder Target for Teensy
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
 authors:
-  - family-names: Lovato
-    given-names: Stefano
-    orcid: https://orcid.org/0000-0003-3892-7816
-title: "Simulink Embedded Coder Target for Teensy"
-version: 0.4
-date-released: 2023-12-01
+  - given-names: Stefano
+    family-names: Lovato
+    affiliation: University of Padova
+    orcid: 'https://orcid.org/0000-0003-3892-7816'
+repository-code: 'https://github.com/stefphd/teensy_ert'
+keywords:
+  - Teensy
+  - Emedded coder target
+  - Simulink
+license: MIT
+commit: 0700e15
+version: '0.4'
+date-released: '2013-10-01'
